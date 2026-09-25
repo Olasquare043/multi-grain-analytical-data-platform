@@ -1,0 +1,13 @@
+task,configuration,comparison,rung_a,rung_b,n_observations,n_seeds_averaged,mean_diff_mae,ci_obs_bootstrap_lower,ci_obs_bootstrap_upper,ci_state_cluster_lower,ci_state_cluster_upper,n_state_clusters,ci_month_cluster_lower,ci_month_cluster_upper,n_month_clusters,month_cluster_note,obs_excludes_zero,state_cluster_excludes_zero,month_cluster_excludes_zero,v1_pooled_ci_lower,v1_pooled_ci_upper,v1_pooled_excludes_zero,n_bootstrap_resamples
+nigeria,"original (untuned, 300 trees)",V1 vs V0,V0,V1,185,20,0.0,0.0,0.0,0.0,0.0,37,0.0,0.0,5,UNRELIABLE: only 5 clusters,False,False,False,0.0,0.0,False,10000
+nigeria,"original (untuned, 300 trees)",V2 vs V1,V1,V2,185,20,37.3489,25.7976,49.3347,34.258,40.4975,37,-8.0544,117.0429,5,UNRELIABLE: only 5 clusters,True,True,False,34.3257,40.407,True,10000
+nigeria,"original (untuned, 300 trees)",V3a vs V2,V2,V3a,185,20,22.2722,11.1972,33.126,17.084,27.3565,37,-21.0112,84.8988,5,UNRELIABLE: only 5 clusters,True,True,False,19.3099,25.365,True,10000
+nigeria,"original (untuned, 300 trees)",V3b vs V3a,V3a,V3b,185,20,-12.0591,-19.568,-4.1846,-18.4108,-5.8451,37,-35.5565,11.4383,5,UNRELIABLE: only 5 clusters,True,True,False,-13.8562,-10.2495,True,10000
+nigeria,"original (untuned, 300 trees)",V4a vs V3b,V3b,V4a,185,20,5.9416,2.3285,9.561,3.9284,7.9126,37,-14.3124,22.7339,5,UNRELIABLE: only 5 clusters,True,True,False,4.9912,6.8547,True,10000
+nigeria,"original (untuned, 300 trees)",V4b vs V4a,V4a,V4b,185,20,-0.5756,-4.5588,3.5086,-2.7016,1.634,37,-21.5315,21.3554,5,UNRELIABLE: only 5 clusters,False,False,False,-1.6084,0.451,False,10000
+nigeria,capacity-controlled (CV-selected on V0),V1 vs V0,V0,V1,185,20,0.0,0.0,0.0,0.0,0.0,37,0.0,0.0,5,UNRELIABLE: only 5 clusters,False,False,False,0.0,0.0,False,10000
+nigeria,capacity-controlled (CV-selected on V0),V2 vs V1,V1,V2,185,20,51.5509,43.2497,60.017,48.8957,54.2385,37,13.3255,109.3603,5,UNRELIABLE: only 5 clusters,True,True,True,49.1783,53.8977,True,10000
+nigeria,capacity-controlled (CV-selected on V0),V3a vs V2,V2,V3a,185,20,-12.6863,-15.4123,-10.0827,-16.9602,-8.801,37,-19.4509,-6.6036,5,UNRELIABLE: only 5 clusters,True,True,True,-14.5327,-10.8731,True,10000
+nigeria,capacity-controlled (CV-selected on V0),V3b vs V3a,V3a,V3b,185,20,-12.4066,-17.4535,-7.5249,-17.821,-6.9339,37,-30.3149,2.4363,5,UNRELIABLE: only 5 clusters,True,True,False,-13.8391,-10.971,True,10000
+nigeria,capacity-controlled (CV-selected on V0),V4a vs V3b,V3b,V4a,185,20,3.8594,1.451,6.2096,2.4847,5.2344,37,-5.3435,16.525,5,UNRELIABLE: only 5 clusters,True,True,False,2.8508,4.8769,True,10000
+nigeria,capacity-controlled (CV-selected on V0),V4b vs V4a,V4a,V4b,185,20,-0.6086,-2.0008,0.7781,-1.418,0.1781,37,-7.4169,4.6512,5,UNRELIABLE: only 5 clusters,False,False,False,-1.3561,0.1532,False,10000

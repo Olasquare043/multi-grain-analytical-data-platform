@@ -1,0 +1,6 @@
+setting,value,description
+MAX_ESTIMATORS,1000,n_estimators cap for every candidate fit; the round count is not a searched column
+EARLY_STOPPING_ROUNDS,30,patience in boosting rounds on the validation metric
+eval_metric,mae,evaluated on each expanding-window fold's validation block
+round_count_rule,int(mean(best_iteration)) over the two folds with the largest training windows,frozen n_estimators of the winning candidate (lowest mean validation MAE across folds)
+cv_random_state,796,LightGBM random_state inside the CV search only; ladder fits override it with the repeat seed

@@ -1,21 +1,22 @@
-"""Task 7 (paper repair pass): make the extrapolation-ceiling finding visible.
+"""Month-by-month national mean petrol price over the Nigerian test window:
+actual, the V0 predictions (both hyperparameter configurations) and the
+random-walk prediction (REF_heuristic).
 
-The paper's most persuasive Nigerian result is currently buried in prose: V0
-(a gradient-boosted tree given essentially the lag-1 price) performs WORSE
-than REF_heuristic (simply carrying that price forward), because the test
-window sits at price levels the training window never reached and trees
-cannot extrapolate. This script re-fits ONLY V0 (both hyperparameter
-configurations, all 20 seeds now used for Task 3/4) to get predictions,
-averages each configuration's prediction across seeds per test row (a single
-seed would make an arbitrary choice among 20 equally-valid fits), and plots
-predicted vs. actual national mean petrol price over the test window against
-the random walk and the training-period ceiling.
+Re-fits ONLY V0 (both configurations, seeds 1-20) to get predictions, averages
+each configuration's prediction across seeds per test row, aggregates to the
+unweighted mean over the 37 states per month, and writes
+outputs/paper/extrapolation_ceiling.csv and the figure. `--figure-only`
+redraws the figure from that CSV without fitting anything or rewriting it.
+
+The figure is plotted by TARGET month: a test row's month_key is the FEATURE
+month, and its target is the following month's price.
 
 Reuses the identical data-loading and feature logic as
-src/paper/ladder_nigeria_rerun.py (itself mirroring notebooks/01) rather than
-re-deriving it a third time.
+src/paper/ladder_nigeria_rerun.py (itself mirroring notebooks/01).
 """
 from __future__ import annotations
+
+import sys
 
 import duckdb
 import numpy as np
@@ -42,6 +43,53 @@ CAPACITY_CONTROLLED_PARAMS = dict(
     n_estimators=12, max_depth=-1, subsample=0.8, subsample_freq=1, colsample_bytree=0.8,
     random_state=796, n_jobs=4, verbosity=-1,
 )
+
+
+FIGURE_CAPTION = (
+    "Each point is the unweighted mean over the 37 states' test rows for one target month. "
+    "The two V0 series are the mean of 20 seeds (LightGBM random_state 1-20) for the original "
+    "configuration (300 trees) and the capacity-controlled configuration (12 trees). The random "
+    "walk predicts each state's next-month price as its current-month price. "
+    "outputs/paper/extrapolation_ceiling.csv carries the underlying series."
+)
+
+
+def plot_figure(monthly: pd.DataFrame) -> None:
+    """Uses the project's colour-blind-safe (Okabe-Ito) style module, like every other figure."""
+    import matplotlib.pyplot as plt
+
+    vizstyle.apply_style()
+    feature_dates = pd.to_datetime(monthly["month_key"].astype(int).astype(str), format="%Y%m%d")
+    labels = (feature_dates + pd.offsets.MonthBegin(1)).dt.strftime("%b %Y")
+    x = np.arange(len(monthly))
+
+    fig, ax = plt.subplots(figsize=(8.6, 5.6))
+    ax.plot(x, monthly["actual_national_mean"], label="Actual national mean price",
+            **vizstyle.series_style(0), linewidth=2.0, markersize=6)
+    ax.plot(x, monthly["pred_original_national_mean"],
+            label="V0 prediction (original, 300 trees)",
+            **vizstyle.series_style(1), linewidth=1.6, markersize=5)
+    ax.plot(x, monthly["pred_capacity_controlled_national_mean"],
+            label="V0 prediction (capacity-controlled, 12 trees)",
+            **vizstyle.series_style(2), linewidth=1.6, markersize=5)
+    ax.plot(x, monthly["pred_ref_heuristic_national_mean"],
+            label="Random walk (REF_heuristic)",
+            **vizstyle.series_style(3), linewidth=1.6, markersize=5)
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=0)
+    ax.set_xlabel("Target month", fontsize=10)
+    ax.set_ylabel("National mean petrol price (NGN/litre)", fontsize=10)
+    ax.set_title("Nigeria: national mean petrol price by month, actual vs. V0 predictions "
+                 "and the random walk", fontsize=11, fontweight="bold")
+    ax.legend(fontsize=8.5, loc="upper left")
+    fig.tight_layout()
+
+    fig_path = vizstyle.finish(
+        fig, FIG_DIR / "fig_extrapolation_ceiling.png",
+        "Source: this platform's own gold layer (fact_fuel_price_monthly)", FIGURE_CAPTION,
+    )
+    print(f"wrote {fig_path}")
 
 
 def main() -> None:
@@ -114,56 +162,12 @@ def main() -> None:
     print(f"train target range: {train_min:.2f} - {train_max:.2f}")
     print(f"test target range:  {test_min:.2f} - {test_max:.2f}")
 
-    # ------------------------------------------------------------------ #
-    # Figure -- reuses the project's own established, colour-blind-safe
-    # (Okabe-Ito) matplotlib style module, for visual consistency with
-    # every other figure in the paper.
-    # ------------------------------------------------------------------ #
-    vizstyle.apply_style()
-    import matplotlib.pyplot as plt
-
-    fig, ax = plt.subplots(figsize=(8.6, 5.6))
-    months = monthly["month_key"].astype(str).str[:6]
-    x = np.arange(len(monthly))
-
-    ax.plot(x, monthly["actual_national_mean"], label="Actual national mean price",
-            **vizstyle.series_style(0), linewidth=2.0, markersize=6)
-    ax.plot(x, monthly["pred_original_national_mean"],
-            label="V0 prediction (original, 300 trees, mean of 20 seeds)",
-            **vizstyle.series_style(1), linewidth=1.6, markersize=5)
-    ax.plot(x, monthly["pred_capacity_controlled_national_mean"],
-            label="V0 prediction (capacity-controlled, mean of 20 seeds)",
-            **vizstyle.series_style(2), linewidth=1.6, markersize=5)
-    ax.plot(x, monthly["pred_ref_heuristic_national_mean"],
-            label="REF_heuristic (random walk)",
-            **vizstyle.series_style(3), linewidth=1.6, markersize=5)
-
-    ax.axhline(train_max, color=vizstyle.MUTED_COLOUR, linestyle=(0, (4, 2)), linewidth=1.4,
-               label=f"Max training-period target (NGN {train_max:,.2f})")
-
-    ax.set_xticks(x)
-    ax.set_xticklabels(months, rotation=0)
-    ax.set_xlabel("Test-window target month (state-level rows averaged to national mean)", fontsize=10)
-    ax.set_ylabel("Petrol price (NGN/litre)", fontsize=10)
-    ax.set_title("Nigeria: predicted vs. actual national mean petrol price, test window\n"
-                 "(the extrapolation ceiling: V0 cannot reach price levels never seen in training)",
-                 fontsize=11, fontweight="bold")
-    ax.legend(fontsize=8, loc="upper left")
-    fig.tight_layout()
-
-    fig_path = vizstyle.finish(
-        fig, FIG_DIR / "fig_extrapolation_ceiling.png",
-        "Source: this platform's own gold layer (fact_fuel_price_monthly)",
-        f"Model predictions are the mean of {len(REPEAT_SEEDS_20)} seeds (1-{REPEAT_SEEDS_20[-1]}), "
-        "each varying only LightGBM's random_state; REF_heuristic is deterministic. The dashed "
-        "horizontal line marks the highest target value observed anywhere in the training period "
-        f"(NGN {train_max:,.2f}/litre); the test period's actual mean rises above it in every month "
-        "shown, which is the mechanical reason a tree-based model, bounded by the leaf values it "
-        "was trained on, cannot fully track the rise and a naive carry-forward heuristic can. "
-        "outputs/paper/extrapolation_ceiling.csv carries the full underlying series.",
-    )
-    print(f"wrote {fig_path}")
+    plot_figure(monthly)
 
 
 if __name__ == "__main__":
-    main()
+    if "--figure-only" in sys.argv:
+        FIG_DIR.mkdir(parents=True, exist_ok=True)
+        plot_figure(pd.read_csv(PAPER_DIR / "extrapolation_ceiling.csv"))
+    else:
+        main()

@@ -1,13 +1,15 @@
 """Task 8 (paper repair pass): renumber all 25 figures sequentially by order
-of first mention, plus the new Task 7 figure as number 26. Copies (never
+of first mention, plus two new figures as numbers 26 (month-by-month V0
+predictions vs actual) and 27 (V0 response curve). Copies (never
 moves or edits) the existing 300 dpi PNGs from outputs/figures/ into
 outputs/paper/figures_renumbered/ under new fig_NN_<slug>.png names, and
 writes outputs/paper/figure_map.csv.
 
 Pure filesystem + csv work; no docker/duckdb/lightgbm needed. Captions are
 reproduced verbatim from outputs/figures/figure_manifest.csv (for the A- and
-docs-series figures) and from the notebook cells that generated the three
-ladder figures (their captions were never written to figure_manifest.csv).
+docs-series figures) and from the notebook cell that generated
+fig_ladder_comparison.png (its caption was never written to figure_manifest.csv).
+Figures 23 and 24 are the regenerated ladder figures (src/paper/ladder_figures.py).
 
 Two orderings (A1a/A1b: heatmap then lines; A12a/b/c/d: national,
 state_premiums, rank_stability, zones -- both assigned in the order
@@ -23,6 +25,7 @@ import shutil
 import pandas as pd
 
 from config import settings
+from src.paper.ladder_captions import nigeria_caption, nyc_caption
 
 FIGURES_DIR = settings.OUTPUTS_DIR / "figures"
 PAPER_DIR = settings.OUTPUTS_DIR / "paper"
@@ -30,30 +33,15 @@ OUT_DIR = PAPER_DIR / "figures_renumbered"
 
 MANIFEST = FIGURES_DIR / "figure_manifest.csv"
 
+# The two ladder figures were regenerated from the corrected tables by
+# src/paper/ladder_figures.py (into outputs/paper/figures/); their captions come from
+# src/paper/ladder_captions.py, which the figures embed too.
+REGENERATED = {
+    "fig_model_ladder_nigeria.png": nigeria_caption,
+    "fig_model_ladder_nyc.png": nyc_caption,
+}
+
 LADDER_CAPTIONS = {
-    "fig_model_ladder_nigeria.png": (
-        "Nigerian petrol price, one month ahead: MAPE by rung, with repeat spread. "
-        "Bars are the mean of 5 repeats (seeds 1-5, varying the model's random_state only; "
-        "Task A does no sampling); error bars are one standard deviation across those repeats. "
-        "Dashed and dotted lines are reference predictors that fit no model: a random walk, and "
-        "the training mean. V3a (hatched) is computed with future months present and is reported "
-        "only for comparison against V3b. Which rung-to-rung differences hold their direction "
-        "across all repeats is reported in outputs/tables/ladder_paired_comparisons.csv, not "
-        "readable from bar heights alone."
-    ),
-    "fig_model_ladder_nyc.png": (
-        "NYC trip duration, pickup-time features: MAPE by rung, with repeat spread. Bars are the "
-        "mean of 5 repeats (seeds 1-5, each drawing its own deterministic content-addressed bucket "
-        "of about 1,957,054 training rows and using its own model random_state); error bars are one "
-        "standard deviation across those repeats, i.e. the amount a rung moves when nothing "
-        "meaningful changes. The y-axis is broken and does not start at zero: the training-mean "
-        "reference sits far above every rung, and on a single zero-based axis the rungs and their "
-        "error bars compress into an unreadable band. Dashed and dotted lines are reference "
-        "predictors that fit no model: distance over average speed, and the training mean. V3a "
-        "(hatched) is computed with future months present and is reported only for comparison "
-        "against V3b. Which rung-to-rung differences hold their direction across all repeats is in "
-        "outputs/tables/ladder_paired_comparisons.csv, and is not readable from bar heights alone."
-    ),
     "fig_ladder_comparison.png": (
         "Both ladders on one axis, and which steps survived five repeats. Bars are the mean of 5 "
         "repeats, shown as % change in MAPE against each task's own V0, so two incomparable error "
@@ -99,19 +87,56 @@ SEQUENCE = [
 ]
 
 
+# Figure 26: must match the caption embedded in the PNG by
+# src/paper/extrapolation_ceiling.py (FIGURE_CAPTION), preceded by a one-line description.
+FIG26_CAPTION = (
+    "Nigeria: national mean petrol price by month, actual versus the V0 predictions and the "
+    "random walk. Each point is the unweighted mean over the 37 states' test rows for one target "
+    "month. The two V0 series are the mean of 20 seeds (LightGBM random_state 1-20) for the "
+    "original configuration (300 trees) and the capacity-controlled configuration (12 trees). "
+    "The random walk predicts each state's next-month price as its current-month price. "
+    "outputs/paper/extrapolation_ceiling.csv carries the underlying series."
+)
+
+
+def fig27_caption() -> str:
+    """Rebuilds the caption embedded by src/paper/nigeria_inference_v2.py from v0_plateau_summary.csv."""
+    p = pd.read_csv(PAPER_DIR / "v0_plateau_summary.csv").set_index("configuration")
+    o = p.loc["original (untuned, 300 trees)"]
+    c = p.loc["capacity-controlled (CV-selected on V0)"]
+    return (
+        "Fitted V0 response curve (next-month price as a function of current-month price) for the "
+        "original and capacity-controlled configurations. "
+        "Each curve is one model (V0, seed 1) whose test errors were verified to reproduce the saved "
+        "seed-1 errors exactly. The dotted line is the random walk. The rug marks the training values "
+        "of price_ngn; the dashed vertical line is the highest of them "
+        f"(NGN {o['train_price_ngn_max']:,.2f}). Points are the 185 test observations. "
+        f"Original curve: exactly flat above price_ngn {o['last_split_threshold_price_ngn']:,.2f}, "
+        f"at NGN {o['plateau_level_above_last_threshold']:,.2f}; {int(o['n_test_actuals_above_plateau_level'])} "
+        "of 185 actual test values exceed that level. Capacity-controlled curve: flat above "
+        f"{c['last_split_threshold_price_ngn']:,.2f}, at NGN {c['plateau_level_above_last_threshold']:,.2f}; "
+        f"{int(c['n_test_actuals_above_plateau_level'])} of 185 exceed it. "
+        f"{int(o['n_test_rows_price_above_train_price_max'])} test observations have a current price "
+        "above the highest training price."
+    )
+
+
 def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     manifest = pd.read_csv(MANIFEST).set_index("filename")["caption"].to_dict()
 
     rows = []
     for i, (fname, label, section, slug, assumption) in enumerate(SEQUENCE, start=1):
-        src_path = FIGURES_DIR / fname
+        src_path = (PAPER_DIR / "figures" if fname in REGENERATED else FIGURES_DIR) / fname
         if not src_path.exists():
             raise FileNotFoundError(f"expected figure not found: {src_path}")
         new_name = f"fig_{i:02d}_{slug}.png"
         dest_path = OUT_DIR / new_name
         shutil.copy2(src_path, dest_path)
-        caption = LADDER_CAPTIONS.get(fname) or manifest.get(fname, "")
+        if fname in REGENERATED:
+            caption = REGENERATED[fname]()
+        else:
+            caption = LADDER_CAPTIONS.get(fname) or manifest.get(fname, "")
         rows.append({
             "current_filename": fname,
             "current_label_in_paper": label,
@@ -122,28 +147,27 @@ def main() -> None:
             "label_assumption": assumption,
         })
 
-    # Task 7's new figure, additional, numbered 26.
-    extra_src = PAPER_DIR / "figures" / "fig_extrapolation_ceiling.png"
-    if extra_src.exists():
-        new_name = "fig_26_extrapolation_ceiling.png"
+    # Additional figures, numbered after the 25 renumbered ones.
+    for number, fname, slug, caption, note in (
+        (26, "fig_extrapolation_ceiling.png", "extrapolation_ceiling", FIG26_CAPTION,
+         "additional figure introduced by this repair pass (Task 7), not a renumbering of an existing one."),
+        (27, "fig_v0_response_curve.png", "v0_response_curve", fig27_caption(),
+         "additional figure introduced by a follow-up analysis, not a renumbering of an existing one."),
+    ):
+        extra_src = PAPER_DIR / "figures" / fname
+        if not extra_src.exists():
+            raise FileNotFoundError(f"expected figure not found: {extra_src}")
+        new_name = f"fig_{number}_{slug}.png"
         shutil.copy2(extra_src, OUT_DIR / new_name)
         rows.append({
-            "current_filename": "fig_extrapolation_ceiling.png (new, Task 7 of this repair pass)",
+            "current_filename": f"{fname} (new)",
             "current_label_in_paper": "(not previously in the paper)",
             "current_section_first_mentioned": "(new)",
-            "new_number": 26,
+            "new_number": number,
             "new_filename": new_name,
-            "caption_as_currently_written": (
-                "Nigeria: predicted vs. actual national mean petrol price, test window. See "
-                "outputs/paper/figures/fig_extrapolation_ceiling.png's own embedded caption and "
-                "outputs/paper/extrapolation_ceiling.csv for the full underlying series."
-            ),
-            "label_assumption": "additional figure introduced by this repair pass (Task 7), not a renumbering of an existing one.",
+            "caption_as_currently_written": caption,
+            "label_assumption": note,
         })
-    else:
-        print("NOTE: outputs/paper/figures/fig_extrapolation_ceiling.png not found yet -- "
-              "run src/paper/extrapolation_ceiling.py first and re-run this script to include "
-              "figure 26 in the map and copy it into figures_renumbered/.")
 
     out = pd.DataFrame(rows)
     out.to_csv(PAPER_DIR / "figure_map.csv", index=False)

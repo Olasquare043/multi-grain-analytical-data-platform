@@ -3,8 +3,10 @@
 Writes outputs/paper/split_config.csv (exact train/val/test windows, row
 counts, NYC's sampling fraction and realised n, CV fold boundaries, and
 target min/max per window per task) and outputs/paper/hyperparameters.csv
-(every LightGBM parameter for both configurations of both tasks, the search
-grid used during capacity selection, and the selected values).
+(every LightGBM parameter for both configurations of both tasks and the
+selected values), plus hyperparameters_search_grid.csv (the candidate grid)
+and hyperparameters_search_protocol.csv (early-stopping settings and the
+frozen-round-count rule), all plain CSV.
 
 Read-only against the existing warehouse (data/warehouse.duckdb) and raw NYC
 Parquet files. Fits no model and writes nothing outside outputs/paper/.
@@ -23,7 +25,9 @@ from src.modelling.splits import (
     NYC_YEAR, NYC_TRAIN_MONTHS, NYC_TEST_MONTHS, NYC_TRAIN_SAMPLE_SIZE,
     NYC_TEST_SAMPLE_SIZE, NYC_BUCKET_COUNT, REPEAT_SEEDS,
 )
-from src.modelling.tuning import expanding_window_folds, CANDIDATE_PARAMS
+from src.modelling.tuning import (
+    expanding_window_folds, CANDIDATE_PARAMS, MAX_ESTIMATORS, EARLY_STOPPING_ROUNDS,
+)
 from src.modelling.ladder import LGBM_PARAMS
 
 PAPER_DIR = settings.OUTPUTS_DIR / "paper"
@@ -42,6 +46,11 @@ NYC_SELECTED = dict(num_leaves=31, learning_rate=0.10, min_child_samples=50,
 
 CAPACITY_COMMON = dict(max_depth=-1, subsample=0.8, subsample_freq=1,
                         colsample_bytree=0.8, random_state=796, n_jobs=4, verbosity=-1)
+
+# run_rung() overrides random_state with the repeat seed for both configurations.
+SEED_ROLE = ("overridden per repeat by the repeat seed (1-20 Nigeria, 1-5 NYC); "
+             "796 is the default and is fixed only inside the CV search")
+CV_RANDOM_STATE = 796  # hardcoded in src/modelling/tuning.py select_hyperparameters_cv
 
 
 def main() -> None:
@@ -191,15 +200,20 @@ def main() -> None:
     hp_rows = []
     for task in ("nigeria", "nyc"):
         for param, value in LGBM_PARAMS.items():
+            role = SEED_ROLE if param == "random_state" else "fixed, applied to every rung"
             hp_rows.append({"task": task, "configuration": "original (untuned, 300 trees)",
-                             "parameter": param, "value": value, "role": "fixed, applied to every rung"})
+                             "parameter": param, "value": value, "role": role})
     for task, selected in (("nigeria", NIGERIA_SELECTED), ("nyc", NYC_SELECTED)):
         full = {**selected, **CAPACITY_COMMON}
         for param, value in full.items():
+            if param in selected:
+                role = "selected by expanding-window CV"
+            elif param == "random_state":
+                role = SEED_ROLE
+            else:
+                role = "fixed (not searched), matches the original variant's non-capacity settings"
             hp_rows.append({"task": task, "configuration": "capacity-controlled (CV-selected on V0)",
-                             "parameter": param, "value": value,
-                             "role": "selected by expanding-window CV" if param in selected
-                                     else "fixed (not searched), matches the original variant's non-capacity settings"})
+                             "parameter": param, "value": value, "role": role})
     hp_df = pd.DataFrame(hp_rows)
     hp_df.to_csv(PAPER_DIR / "hyperparameters.csv", index=False)
 
@@ -211,8 +225,24 @@ def main() -> None:
     grid_df = pd.DataFrame(grid_rows)
     grid_df.to_csv(PAPER_DIR / "hyperparameters_search_grid.csv", index=False)
 
+    protocol_df = pd.DataFrame([
+        {"setting": "MAX_ESTIMATORS", "value": MAX_ESTIMATORS,
+         "description": "n_estimators cap for every candidate fit; the round count is not a searched column"},
+        {"setting": "EARLY_STOPPING_ROUNDS", "value": EARLY_STOPPING_ROUNDS,
+         "description": "patience in boosting rounds on the validation metric"},
+        {"setting": "eval_metric", "value": "mae",
+         "description": "evaluated on each expanding-window fold's validation block"},
+        {"setting": "round_count_rule",
+         "value": "int(mean(best_iteration)) over the two folds with the largest training windows",
+         "description": "frozen n_estimators of the winning candidate (lowest mean validation MAE across folds)"},
+        {"setting": "cv_random_state", "value": CV_RANDOM_STATE,
+         "description": "LightGBM random_state inside the CV search only; ladder fits override it with the repeat seed"},
+    ])
+    protocol_df.to_csv(PAPER_DIR / "hyperparameters_search_protocol.csv", index=False)
+
     print(f"wrote hyperparameters.csv ({len(hp_df)} rows), "
-          f"hyperparameters_search_grid.csv ({len(grid_df)} rows)")
+          f"hyperparameters_search_grid.csv ({len(grid_df)} rows), "
+          f"hyperparameters_search_protocol.csv ({len(protocol_df)} rows)")
 
 
 if __name__ == "__main__":

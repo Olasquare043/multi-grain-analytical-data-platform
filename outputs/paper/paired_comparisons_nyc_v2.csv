@@ -1,0 +1,15 @@
+task,configuration,comparison,rung_a,rung_b,n_pairs,n_test_days,n_seeds,mean_diff_pooled,mean_diff_seed_level,sd_diff_seed_level,day_cluster_ci_lower,day_cluster_ci_upper,day_cluster_excludes_zero,n_bootstrap_resamples,iid_full_data_ci_lower,iid_full_data_ci_upper,se_ratio_day_cluster_vs_iid,v1_ci_lower,v1_ci_upper,v1_excludes_zero,v1_mean_diff_mae,v1_n_observations_pooled,v1_n_observations_bootstrapped,v1_pool_was_subsampled,conclusion_changed_vs_v1
+nyc,"original (untuned, 300 trees)",V1 vs V0,V0,V1,2105001,61,5,-0.2746,-0.2744,0.5539,-0.4365,-0.1199,True,10000,-0.4081,-0.1411,1.179,-0.9764,0.1815,False,-0.2721,2108491,200000,True,True
+nyc,"original (untuned, 300 trees)",V2 vs V1,V1,V2,2105001,61,5,-5.8821,-5.8819,0.3543,-9.7465,-2.0399,True,10000,-6.0787,-5.6855,19.648,-6.6263,-5.3497,True,-5.8808,2108421,200000,True,False
+nyc,"original (untuned, 300 trees)",V3a vs V2,V2,V3a,2105001,61,5,-4.7043,-4.7042,0.1856,-5.2979,-4.1038,True,10000,-4.8568,-4.5518,3.916,-5.1816,-4.2275,True,-4.7022,2108421,200000,True,False
+nyc,"original (untuned, 300 trees)",V3b vs V3a,V3a,V3b,2105001,61,5,2.0247,2.0246,0.2578,0.9439,3.2239,True,10000,1.8944,2.155,8.793,1.3191,2.2355,True,2.0241,2108421,200000,True,False
+nyc,"original (untuned, 300 trees)",V4a vs V3b,V3b,V4a,2105001,61,5,-3.6926,-3.6926,0.3144,-4.0267,-3.3385,True,10000,-3.8061,-3.5791,3.046,-3.9762,-3.2203,True,-3.6936,2108421,200000,True,False
+nyc,"original (untuned, 300 trees)",V4b vs V4a,V4a,V4b,2105001,61,5,4.5617,4.561,1.905,4.2696,4.8389,True,10000,4.43,4.6933,2.188,4.242,5.087,True,4.5639,2108421,200000,True,False
+nyc,"original (untuned, 300 trees)",V5 vs V4b,V4b,V5,2105001,61,5,3.2908,3.2919,1.1953,1.8148,4.8284,True,10000,3.1777,3.4039,13.398,3.1122,3.8748,True,3.2884,2108421,200000,True,False
+nyc,capacity-controlled (CV-selected on V0),V1 vs V0,V0,V1,2105001,61,5,-0.344,-0.3442,0.491,-0.4977,-0.1956,True,10000,-0.4621,-0.226,1.29,-0.4314,0.2268,False,-0.3411,2108491,200000,True,True
+nyc,capacity-controlled (CV-selected on V0),V2 vs V1,V1,V2,2105001,61,5,-5.2237,-5.2236,0.3855,-9.2464,-1.3585,True,10000,-5.4236,-5.0238,19.763,-5.7317,-4.4538,True,-5.2212,2108421,200000,True,False
+nyc,capacity-controlled (CV-selected on V0),V3a vs V2,V2,V3a,2105001,61,5,-4.9041,-4.9039,0.3159,-5.4782,-4.2928,True,10000,-5.0586,-4.7497,3.844,-5.4518,-4.4512,True,-4.9051,2108421,200000,True,False
+nyc,capacity-controlled (CV-selected on V0),V3b vs V3a,V3a,V3b,2105001,61,5,2.237,2.2368,0.3401,1.1811,3.4337,True,10000,2.1034,2.3706,8.356,1.7432,2.5966,True,2.2368,2108421,200000,True,False
+nyc,capacity-controlled (CV-selected on V0),V4a vs V3b,V3b,V4a,2105001,61,5,-4.6439,-4.644,0.2235,-4.9926,-4.2499,True,10000,-4.7632,-4.5246,3.097,-4.885,-4.0837,True,-4.6433,2108421,200000,True,False
+nyc,capacity-controlled (CV-selected on V0),V4b vs V4a,V4a,V4b,2105001,61,5,5.9036,5.9035,2.5548,5.5693,6.2172,True,10000,5.7669,6.0403,2.388,5.2297,6.12,True,5.9031,2108421,200000,True,False
+nyc,capacity-controlled (CV-selected on V0),V5 vs V4b,V4b,V5,2105001,61,5,3.1332,3.1347,2.6465,1.4502,4.8213,True,10000,3.0069,3.2594,13.356,2.4309,3.2646,True,3.1321,2108421,200000,True,False

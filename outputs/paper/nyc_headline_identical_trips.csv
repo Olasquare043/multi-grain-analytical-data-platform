@@ -1,0 +1,17 @@
+configuration,record_type,seed,n_gated_trips,n_ungated_trips_v0,v0_ungated_mae,v0_gated_set_mae,test_set_composition_effect_s,v4a_gated_set_mae,improvement_v0_ungated_to_v4a_s,improvement_v0_ungated_to_v4a_pct_of_ungated,improvement_v0_gated_to_v4a_s,improvement_v0_gated_to_v4a_pct_of_gated,share_of_headline_due_to_test_set_composition_pct,v0_ungated_mape,v0_gated_set_mape,v4a_gated_set_mape,note
+"original (untuned, 300 trees)",seed,1.0,420169.0,429258.0,336.8535,336.1695,0.684,324.4843,12.3692,3.672,11.6852,3.476,5.5295,77.0372,72.1878,75.3767,
+"original (untuned, 300 trees)",seed,2.0,420267.0,429175.0,339.586,339.3794,0.2067,326.5581,13.028,3.8364,12.8213,3.7779,1.5865,80.8342,75.4556,77.113,
+"original (untuned, 300 trees)",seed,3.0,421283.0,430393.0,337.79,336.6295,1.1604,323.9197,13.8702,4.1062,12.7098,3.7756,8.3663,76.3807,70.2771,72.5067,
+"original (untuned, 300 trees)",seed,4.0,421535.0,430531.0,339.4389,338.1466,1.2923,325.0549,14.384,4.2376,13.0917,3.8716,8.9844,78.345,72.2702,74.9785,
+"original (untuned, 300 trees)",seed,5.0,421747.0,430871.0,334.5269,332.8415,1.6854,320.5067,14.0202,4.1911,12.3348,3.7059,12.0213,77.8634,72.6637,76.4353,
+"original (untuned, 300 trees)",mean_across_seeds,,421000.2,430045.6,337.6391,336.6333,1.0058,324.1047,13.5343,4.0086,12.5286,3.7214,7.2976,78.0921,72.5709,75.282,
+"original (untuned, 300 trees)",sd_across_seeds,,733.514280706245,777.1491491341928,2.083,2.471,0.5723,2.2386,0.8193,0.244,0.5442,0.1493,3.9384,1.7086,1.8594,1.7668,
+capacity-controlled (CV-selected on V0),seed,1.0,420169.0,429258.0,336.4698,335.863,0.6067,323.4903,12.9795,3.8575,12.3727,3.6839,4.6747,75.0063,70.4343,74.5596,
+capacity-controlled (CV-selected on V0),seed,2.0,420267.0,429175.0,339.7582,339.5753,0.183,326.01,13.7482,4.0465,13.5653,3.9948,1.3308,80.9074,75.6017,75.8121,
+capacity-controlled (CV-selected on V0),seed,3.0,421283.0,430393.0,337.2929,336.137,1.1559,323.2188,14.0741,4.1727,12.9182,3.8431,8.2129,75.4979,69.4314,70.86,
+capacity-controlled (CV-selected on V0),seed,4.0,421535.0,430531.0,338.923,337.6144,1.3086,324.4005,14.5225,4.2849,13.2139,3.9139,9.0107,77.6755,71.7531,75.289,
+capacity-controlled (CV-selected on V0),seed,5.0,421747.0,430871.0,334.1656,332.4863,1.6793,320.1615,14.0041,4.1908,12.3248,3.7068,11.9916,78.7325,73.5357,75.2874,
+capacity-controlled (CV-selected on V0),mean_across_seeds,,421000.2,430045.6,337.3219,336.3352,0.9867,323.4562,13.8657,4.1105,12.879,3.8285,7.0441,77.5639,72.1512,74.3616,
+capacity-controlled (CV-selected on V0),sd_across_seeds,,733.514280706245,777.1491491341928,2.1902,2.6082,0.5921,2.1404,0.5686,0.1649,0.5358,0.1331,4.1221,2.417,2.4661,2.0076,
+reference (no model fitted),reference_note,,,,,,,,,,,,,,,,"REF_mean: scored on the GATED test set: reference_results() scores against data.y_test = split.test[trip_duration_seconds], the gated fact_trip pull (notebooks/02 cell 11; identical code in src/paper/ladder_nyc_refit.py, whose re-fit reproduced every published REF cell exactly). The training mean is the mean of the GATED training set."
+reference (no model fitted),reference_note,,,,,,,,,,,,,,,,"REF_heuristic: scored on the GATED test set: reference_results() scores against data.y_test = split.test[trip_duration_seconds], the gated fact_trip pull (notebooks/02 cell 11; identical code in src/paper/ladder_nyc_refit.py, whose re-fit reproduced every published REF cell exactly). Its average speed is total distance over total time of the GATED training set."
