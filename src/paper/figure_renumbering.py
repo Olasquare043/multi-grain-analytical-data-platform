@@ -9,14 +9,12 @@ reproduced verbatim from outputs/figures/figure_manifest.csv (for the A- and
 docs-series figures) and from the notebook cells that generated the three
 ladder figures (their captions were never written to figure_manifest.csv).
 
-Two orderings are assumptions, stated here because the paper text is not
-available to this pass to check against directly:
-  - A1a/A1b: assigned in the order src/viz/figures.py's fig_a1() generates
-    them (heatmap, then lines).
-  - A12a/b/c/d: assigned in the order src/viz/figures.py's fig_a12()
-    generates them (national, state_premiums, rank_stability, zones).
-Both are flagged in the `label_assumption` column so they can be corrected
-against the paper's own captions if the paper orders them differently.
+Two orderings (A1a/A1b: heatmap then lines; A12a/b/c/d: national,
+state_premiums, rank_stability, zones -- both assigned in the order
+src/viz/figures.py's fig_a1()/fig_a12() generate them) were initially
+flagged as unverified assumptions in the `label_assumption` column. The user
+has since verified both against the paper's own text (2026-09-20) and
+confirmed they are correct as assigned; the flags have been cleared.
 """
 from __future__ import annotations
 
@@ -79,10 +77,8 @@ SEQUENCE = [
     ("fig_architecture_ingestion.png", "Figure 4.4 (ingestion)", "4.4", "architecture_ingestion", ""),
     ("fig_architecture_serving.png", "Figure 4.4 (serving)", "4.4", "architecture_serving", ""),
     ("fig_cloud_architecture.png", "Figure 4.5", "4.5", "cloud_architecture", ""),
-    ("A1_demand_profile_heatmap.png", "Figure A1a", "6.2", "a1a_demand_profile_heatmap",
-     "ASSUMED: A1a=heatmap, A1b=lines, per src/viz/figures.py fig_a1() generation order -- verify against the paper's own A1a/A1b captions."),
-    ("A1_demand_profile_lines.png", "Figure A1b", "6.2", "a1b_demand_profile_lines",
-     "ASSUMED: A1a=heatmap, A1b=lines, per src/viz/figures.py fig_a1() generation order -- verify against the paper's own A1a/A1b captions."),
+    ("A1_demand_profile_heatmap.png", "Figure A1a", "6.2", "a1a_demand_profile_heatmap", ""),
+    ("A1_demand_profile_lines.png", "Figure A1b", "6.2", "a1b_demand_profile_lines", ""),
     ("A2_od_corridors.png", "Figure A2", "6.2", "a2_od_corridors", ""),
     ("A3_congestion_proxy.png", "Figure A3", "6.2", "a3_congestion_proxy", ""),
     ("A5_revenue_concentration.png", "Figure A5", "6.2", "a5_revenue_concentration", ""),
@@ -90,14 +86,10 @@ SEQUENCE = [
     ("A11_missingness_structure.png", "Figure A11", "6.2", "a11_missingness_structure", ""),
     ("A6_food_price_index.png", "Figure A6", "6.3", "a6_food_price_index", ""),
     ("A8_price_dispersion.png", "Figure A8", "6.3", "a8_price_dispersion", ""),
-    ("A12_petrol_price_national.png", "Figure A12a", "6.3", "a12a_petrol_price_national",
-     "ASSUMED: A12a-d = national, state_premiums, rank_stability, zones, per src/viz/figures.py fig_a12() generation order -- verify against the paper's own A12a-d captions."),
-    ("A12_petrol_price_state_premiums.png", "Figure A12b", "6.3", "a12b_petrol_price_state_premiums",
-     "ASSUMED: see A12a note."),
-    ("A12_petrol_price_rank_stability.png", "Figure A12c", "6.3", "a12c_petrol_price_rank_stability",
-     "ASSUMED: see A12a note."),
-    ("A12_petrol_price_zones.png", "Figure A12d", "6.3", "a12d_petrol_price_zones",
-     "ASSUMED: see A12a note."),
+    ("A12_petrol_price_national.png", "Figure A12a", "6.3", "a12a_petrol_price_national", ""),
+    ("A12_petrol_price_state_premiums.png", "Figure A12b", "6.3", "a12b_petrol_price_state_premiums", ""),
+    ("A12_petrol_price_rank_stability.png", "Figure A12c", "6.3", "a12c_petrol_price_rank_stability", ""),
+    ("A12_petrol_price_zones.png", "Figure A12d", "6.3", "a12d_petrol_price_zones", ""),
     ("A7_subsidy_structural_break.png", "Figure A7", "6.4", "a7_subsidy_structural_break", ""),
     ("A9_fuel_food_passthrough.png", "Figure A9", "6.4", "a9_fuel_food_passthrough", ""),
     ("A10_grain_comparison.png", "Figure A10", "6.5", "a10_grain_comparison", ""),
