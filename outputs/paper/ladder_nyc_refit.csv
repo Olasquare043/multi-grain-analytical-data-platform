@@ -1,0 +1,19 @@
+variant,rung,description,mae_seconds,mape_pct,mae_mean,mae_sd,mae_min,mae_max,mape_mean,mape_sd,mape_min,mape_max,n_repeats,seeds,notes
+reference (no model fitted),REF_mean,reference: predict the training mean trip duration for every test row,647.3819,211.1504,646.963,3.0473,641.7781,649.8334,210.0233,2.2737,207.2471,212.9989,5,"1,2,3,4,5","no model, no features"
+reference (no model fitted),REF_heuristic,reference: trip distance / the training set's average speed,549.6182,47.0134,548.6071,2.65,544.3228,551.526,46.7433,1.1723,45.3499,48.1626,5,"1,2,3,4,5",no-model domain heuristic
+"original (untuned, 300 trees)",V0,"raw baseline, un-gated source",336.8535,77.0372,337.6391,2.083,334.5269,339.586,78.0921,1.7086,76.3807,80.8342,5,"1,2,3,4,5",raw TLC source
+capacity-controlled (CV-selected on V0),V0,"raw baseline, un-gated source",336.4698,75.0063,337.3219,2.1902,334.1656,339.7582,77.5639,2.417,75.0063,80.9074,5,"1,2,3,4,5",raw TLC source
+"original (untuned, 300 trees)",V1,quality-gated,336.1267,75.3658,336.3589,2.2022,333.0533,339.2026,74.5251,2.4966,70.2538,76.4027,5,"1,2,3,4,5",gated fact_trip
+capacity-controlled (CV-selected on V0),V1,quality-gated,335.5913,73.8954,335.991,2.2593,332.6085,338.8797,73.5801,2.4833,69.5589,75.7372,5,"1,2,3,4,5",gated fact_trip
+"original (untuned, 300 trees)",V2,+ dimensional features,330.7424,72.2264,330.4769,2.2656,326.7962,333.0111,72.3969,2.1335,69.3965,74.5298,5,"1,2,3,4,5",dim_geography/dim_date
+capacity-controlled (CV-selected on V0),V2,+ dimensional features,330.9188,71.9387,330.7674,2.261,327.0927,333.2534,72.0043,2.4653,68.2378,74.4151,5,"1,2,3,4,5",dim_geography/dim_date
+"original (untuned, 300 trees)",V3a,"LEAKY, DO NOT TRUST THIS NUMBER",326.263,70.6555,325.7728,2.2277,322.1835,328.3319,70.7649,1.7869,67.9193,72.7013,5,"1,2,3,4,5",leaky historical avg
+capacity-controlled (CV-selected on V0),V3a,"LEAKY, DO NOT TRUST THIS NUMBER",326.225,70.7374,325.8635,2.2362,322.2631,328.4504,70.3233,2.0462,66.9603,72.4809,5,"1,2,3,4,5",leaky historical avg
+"original (untuned, 300 trees)",V3b,+ zone_hour_avg_duration_pit,328.4682,74.2323,327.7974,2.2153,324.0696,329.9871,74.2208,1.8857,71.6921,76.6748,5,"1,2,3,4,5",point-in-time correct
+capacity-controlled (CV-selected on V0),V3b,+ zone_hour_avg_duration_pit,328.2177,73.8561,328.1003,2.2527,324.5047,330.68,73.8386,1.8933,70.7408,75.5194,5,"1,2,3,4,5",point-in-time correct
+"original (untuned, 300 trees)",V4a,"+ pickup zone identity, ONE-HOT",324.4843,75.3767,324.1047,2.2386,320.5067,326.5581,75.282,1.7668,72.5067,77.113,5,"1,2,3,4,5",one-hot scipy.sparse
+capacity-controlled (CV-selected on V0),V4a,"+ pickup zone identity, ONE-HOT",323.4903,74.5596,323.4562,2.1404,320.1615,326.01,74.3616,2.0076,70.86,75.8121,5,"1,2,3,4,5",one-hot scipy.sparse
+"original (untuned, 300 trees)",V4b,"+ pickup zone identity, TARGET encoded",328.8247,76.0285,328.6658,3.3401,324.072,332.9442,76.7496,3.3482,71.5703,79.8191,5,"1,2,3,4,5",point-in-time target encoding
+capacity-controlled (CV-selected on V0),V4b,"+ pickup zone identity, TARGET encoded",330.5124,76.5496,329.3597,3.833,323.9978,334.2973,76.4272,3.3495,70.7756,79.5756,5,"1,2,3,4,5",point-in-time target encoding
+"original (untuned, 300 trees)",V5,+ external enrichment (weather),333.7955,77.5557,331.9576,3.1528,326.8801,334.7404,77.3396,3.3594,71.8402,80.9979,5,"1,2,3,4,5",fact_weather_daily
+capacity-controlled (CV-selected on V0),V5,+ external enrichment (weather),335.387,78.9148,332.4944,2.6753,328.4535,335.387,77.6691,3.2611,72.8219,81.8058,5,"1,2,3,4,5",fact_weather_daily

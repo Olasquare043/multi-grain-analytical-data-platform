@@ -1,0 +1,49 @@
+task,configuration,parameter,value,role
+nigeria,"original (untuned, 300 trees)",n_estimators,300.0,"fixed, applied to every rung"
+nigeria,"original (untuned, 300 trees)",learning_rate,0.05,"fixed, applied to every rung"
+nigeria,"original (untuned, 300 trees)",num_leaves,31.0,"fixed, applied to every rung"
+nigeria,"original (untuned, 300 trees)",max_depth,-1.0,"fixed, applied to every rung"
+nigeria,"original (untuned, 300 trees)",min_child_samples,20.0,"fixed, applied to every rung"
+nigeria,"original (untuned, 300 trees)",subsample,0.8,"fixed, applied to every rung"
+nigeria,"original (untuned, 300 trees)",subsample_freq,1.0,"fixed, applied to every rung"
+nigeria,"original (untuned, 300 trees)",colsample_bytree,0.8,"fixed, applied to every rung"
+nigeria,"original (untuned, 300 trees)",random_state,796.0,"fixed, applied to every rung"
+nigeria,"original (untuned, 300 trees)",n_jobs,4.0,"fixed, applied to every rung"
+nigeria,"original (untuned, 300 trees)",verbosity,-1.0,"fixed, applied to every rung"
+nyc,"original (untuned, 300 trees)",n_estimators,300.0,"fixed, applied to every rung"
+nyc,"original (untuned, 300 trees)",learning_rate,0.05,"fixed, applied to every rung"
+nyc,"original (untuned, 300 trees)",num_leaves,31.0,"fixed, applied to every rung"
+nyc,"original (untuned, 300 trees)",max_depth,-1.0,"fixed, applied to every rung"
+nyc,"original (untuned, 300 trees)",min_child_samples,20.0,"fixed, applied to every rung"
+nyc,"original (untuned, 300 trees)",subsample,0.8,"fixed, applied to every rung"
+nyc,"original (untuned, 300 trees)",subsample_freq,1.0,"fixed, applied to every rung"
+nyc,"original (untuned, 300 trees)",colsample_bytree,0.8,"fixed, applied to every rung"
+nyc,"original (untuned, 300 trees)",random_state,796.0,"fixed, applied to every rung"
+nyc,"original (untuned, 300 trees)",n_jobs,4.0,"fixed, applied to every rung"
+nyc,"original (untuned, 300 trees)",verbosity,-1.0,"fixed, applied to every rung"
+nigeria,capacity-controlled (CV-selected on V0),num_leaves,7.0,selected by expanding-window CV
+nigeria,capacity-controlled (CV-selected on V0),learning_rate,0.1,selected by expanding-window CV
+nigeria,capacity-controlled (CV-selected on V0),min_child_samples,5.0,selected by expanding-window CV
+nigeria,capacity-controlled (CV-selected on V0),reg_alpha,0.0,selected by expanding-window CV
+nigeria,capacity-controlled (CV-selected on V0),reg_lambda,0.0,selected by expanding-window CV
+nigeria,capacity-controlled (CV-selected on V0),n_estimators,12.0,selected by expanding-window CV
+nigeria,capacity-controlled (CV-selected on V0),max_depth,-1.0,"fixed (not searched), matches the original variant's non-capacity settings"
+nigeria,capacity-controlled (CV-selected on V0),subsample,0.8,"fixed (not searched), matches the original variant's non-capacity settings"
+nigeria,capacity-controlled (CV-selected on V0),subsample_freq,1.0,"fixed (not searched), matches the original variant's non-capacity settings"
+nigeria,capacity-controlled (CV-selected on V0),colsample_bytree,0.8,"fixed (not searched), matches the original variant's non-capacity settings"
+nigeria,capacity-controlled (CV-selected on V0),random_state,796.0,"fixed (not searched), matches the original variant's non-capacity settings"
+nigeria,capacity-controlled (CV-selected on V0),n_jobs,4.0,"fixed (not searched), matches the original variant's non-capacity settings"
+nigeria,capacity-controlled (CV-selected on V0),verbosity,-1.0,"fixed (not searched), matches the original variant's non-capacity settings"
+nyc,capacity-controlled (CV-selected on V0),num_leaves,31.0,selected by expanding-window CV
+nyc,capacity-controlled (CV-selected on V0),learning_rate,0.1,selected by expanding-window CV
+nyc,capacity-controlled (CV-selected on V0),min_child_samples,50.0,selected by expanding-window CV
+nyc,capacity-controlled (CV-selected on V0),reg_alpha,1.0,selected by expanding-window CV
+nyc,capacity-controlled (CV-selected on V0),reg_lambda,1.0,selected by expanding-window CV
+nyc,capacity-controlled (CV-selected on V0),n_estimators,182.0,selected by expanding-window CV
+nyc,capacity-controlled (CV-selected on V0),max_depth,-1.0,"fixed (not searched), matches the original variant's non-capacity settings"
+nyc,capacity-controlled (CV-selected on V0),subsample,0.8,"fixed (not searched), matches the original variant's non-capacity settings"
+nyc,capacity-controlled (CV-selected on V0),subsample_freq,1.0,"fixed (not searched), matches the original variant's non-capacity settings"
+nyc,capacity-controlled (CV-selected on V0),colsample_bytree,0.8,"fixed (not searched), matches the original variant's non-capacity settings"
+nyc,capacity-controlled (CV-selected on V0),random_state,796.0,"fixed (not searched), matches the original variant's non-capacity settings"
+nyc,capacity-controlled (CV-selected on V0),n_jobs,4.0,"fixed (not searched), matches the original variant's non-capacity settings"
+nyc,capacity-controlled (CV-selected on V0),verbosity,-1.0,"fixed (not searched), matches the original variant's non-capacity settings"

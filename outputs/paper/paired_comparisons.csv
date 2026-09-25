@@ -1,0 +1,27 @@
+task,configuration,comparison,rung_a,rung_b,mean_diff_mae,sd_diff_mae,bootstrap_ci_lower_95,bootstrap_ci_upper_95,n_bootstrap_resamples,n_observations_pooled,n_observations_bootstrapped,pool_was_subsampled,n_seeds_agreeing_direction,n_seeds_total,direction_consistent,better_rung
+nigeria,"original (untuned, 300 trees)",V1 vs V0,V0,V1,0.0,0.0,0.0,0.0,10000,3700,3700,False,0,20,False,tie
+nigeria,"original (untuned, 300 trees)",V2 vs V1,V1,V2,37.3489,13.2844,34.3257,40.407,10000,3700,3700,False,20,20,True,V1
+nigeria,"original (untuned, 300 trees)",V3a vs V2,V2,V3a,22.2722,14.0588,19.3099,25.365,10000,3700,3700,False,20,20,True,V2
+nigeria,"original (untuned, 300 trees)",V3b vs V3a,V3a,V3b,-12.0591,3.4529,-13.8562,-10.2495,10000,3700,3700,False,20,20,True,V3b
+nigeria,"original (untuned, 300 trees)",V4a vs V3b,V3b,V4a,5.9416,2.6138,4.9912,6.8547,10000,3700,3700,False,20,20,True,V3b
+nigeria,"original (untuned, 300 trees)",V4b vs V4a,V4a,V4b,-0.5756,2.5875,-1.6084,0.451,10000,3700,3700,False,12,20,False,V4b
+nyc,"original (untuned, 300 trees)",V1 vs V0,V0,V1,-0.2721,0.5535,-0.9764,0.1815,10000,2108491,200000,True,4,5,False,V1
+nyc,"original (untuned, 300 trees)",V2 vs V1,V1,V2,-5.8808,0.3577,-6.6263,-5.3497,10000,2108421,200000,True,5,5,True,V2
+nyc,"original (untuned, 300 trees)",V3a vs V2,V2,V3a,-4.7022,0.189,-5.1816,-4.2275,10000,2108421,200000,True,5,5,True,V3a
+nyc,"original (untuned, 300 trees)",V3b vs V3a,V3a,V3b,2.0241,0.2572,1.3191,2.2355,10000,2108421,200000,True,5,5,True,V3a
+nyc,"original (untuned, 300 trees)",V4a vs V3b,V3b,V4a,-3.6936,0.3105,-3.9762,-3.2203,10000,2108421,200000,True,5,5,True,V4a
+nyc,"original (untuned, 300 trees)",V4b vs V4a,V4a,V4b,4.5639,1.9115,4.242,5.087,10000,2108421,200000,True,5,5,True,V4a
+nyc,"original (untuned, 300 trees)",V5 vs V4b,V4b,V5,3.2884,1.1989,3.1122,3.8748,10000,2108421,200000,True,5,5,True,V4b
+nigeria,capacity-controlled (CV-selected on V0),V1 vs V0,V0,V1,0.0,0.0,0.0,0.0,10000,3700,3700,False,0,20,False,tie
+nigeria,capacity-controlled (CV-selected on V0),V2 vs V1,V1,V2,51.5509,32.3799,49.1783,53.8977,10000,3700,3700,False,20,20,True,V1
+nigeria,capacity-controlled (CV-selected on V0),V3a vs V2,V2,V3a,-12.6863,37.5152,-14.5327,-10.8731,10000,3700,3700,False,9,20,False,V3a
+nigeria,capacity-controlled (CV-selected on V0),V3b vs V3a,V3a,V3b,-12.4066,13.1062,-13.8391,-10.971,10000,3700,3700,False,17,20,False,V3b
+nigeria,capacity-controlled (CV-selected on V0),V4a vs V3b,V3b,V4a,3.8594,4.7246,2.8508,4.8769,10000,3700,3700,False,16,20,False,V3b
+nigeria,capacity-controlled (CV-selected on V0),V4b vs V4a,V4a,V4b,-0.6086,8.0882,-1.3561,0.1532,10000,3700,3700,False,13,20,False,V4b
+nyc,capacity-controlled (CV-selected on V0),V1 vs V0,V0,V1,-0.3411,0.4882,-0.4314,0.2268,10000,2108491,200000,True,3,5,False,V1
+nyc,capacity-controlled (CV-selected on V0),V2 vs V1,V1,V2,-5.2212,0.3874,-5.7317,-4.4538,10000,2108421,200000,True,5,5,True,V2
+nyc,capacity-controlled (CV-selected on V0),V3a vs V2,V2,V3a,-4.9051,0.3208,-5.4518,-4.4512,10000,2108421,200000,True,5,5,True,V3a
+nyc,capacity-controlled (CV-selected on V0),V3b vs V3a,V3a,V3b,2.2368,0.3451,1.7432,2.5966,10000,2108421,200000,True,5,5,True,V3a
+nyc,capacity-controlled (CV-selected on V0),V4a vs V3b,V3b,V4a,-4.6433,0.2233,-4.885,-4.0837,10000,2108421,200000,True,5,5,True,V4a
+nyc,capacity-controlled (CV-selected on V0),V4b vs V4a,V4a,V4b,5.9031,2.5573,5.2297,6.12,10000,2108421,200000,True,5,5,True,V4a
+nyc,capacity-controlled (CV-selected on V0),V5 vs V4b,V4b,V5,3.1321,2.6479,2.4309,3.2646,10000,2108421,200000,True,4,5,False,V4b

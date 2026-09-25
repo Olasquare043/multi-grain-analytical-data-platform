@@ -1,0 +1,5 @@
+# CSC 796 -- OPTIONAL cloud module only (section 9).
+# Installed into the same image but never imported by the core pipeline.
+# `make run` must succeed whether or not these are present.
+google-cloud-bigquery==3.27.0
+db-dtypes==1.3.1

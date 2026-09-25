@@ -1,0 +1,35 @@
+# Credentials -- never commit (section 9 authentication requirement).
+secrets/
+*.json.key
+*-credentials.json
+.env
+
+# Data lake: every byte is reproducible from the extractors.
+data/raw/
+data/bronze/
+data/silver/
+data/gold/
+*.duckdb
+*.duckdb.wal
+
+# Run artefacts
+logs/
+outputs/**/*.png
+outputs/**/*.csv
+outputs/**/*.md
+!outputs/.gitkeep
+
+# Paper repair pass (outputs/paper/, src/paper/): these CSV/MD/PNG files are
+# the actual deliverables of that pass, not regenerable run artefacts like
+# the rest of outputs/ -- track them. The per-observation error Parquet
+# files under outputs/paper/errors/ are the exception: large, regenerable
+# intermediate data in the same spirit as data/ above.
+!outputs/paper/**/*.csv
+!outputs/paper/**/*.md
+!outputs/paper/**/*.png
+outputs/paper/errors/
+
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/

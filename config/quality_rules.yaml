@@ -1,0 +1,604 @@
+# ===========================================================================
+# Declarative data quality rules (section 6).
+#
+# Applied at the silver and gold boundaries. Each rule declares a severity:
+#   fail -> the pipeline stops. Reserved for defects that would make a published
+#           figure wrong: a missing table, a broken key, a lost row.
+#   warn -> recorded in outputs/quality/quality_report.{csv,md} and carried into
+#           the paper. Real anomaly volumes are findings, not embarrassments, so
+#           the default for "the data is messy" is warn, not fail.
+#
+# Rule types implemented by src/quality/engine.py:
+#   row_count              bounds on the cardinality of a relation
+#   null_rate              maximum share of NULLs in a column
+#   referential_integrity  every FK resolves; unknown-member rate reported
+#   range                  numeric bounds on a column
+#   domain                 a column's values lie in an allowed set
+#   expression             an arbitrary SQL predicate that must hold per row
+#   unique                 a key column combination is unique
+#   duplicates             duplicate count on a natural key, reported not enforced
+# ===========================================================================
+version: 1
+
+rules:
+
+  # ----------------------------------------------------------- cardinality
+  - id: Q001
+    name: fact_trip_row_count
+    layer: gold
+    type: row_count
+    table: fact_trip
+    severity: fail
+    params:
+      min: 38000000
+      max: 42000000
+    description: >
+      fact_trip must hold the 2024 corpus less structural rejects. Bounds are
+      wide enough to survive a TLC revision but narrow enough that a partial
+      build cannot pass unnoticed.
+
+  - id: Q002
+    name: fact_fuel_price_row_count
+    layer: gold
+    type: row_count
+    table: fact_fuel_price_monthly
+    severity: fail
+    params:
+      min: 900
+      max: 2000
+    description: >
+      The NBS panel is complete at 37 federating units per published month;
+      a collapse here means the Excel parser has stopped finding header rows.
+
+  - id: Q003
+    name: fact_market_price_row_count
+    layer: gold
+    type: row_count
+    table: fact_market_price_monthly
+    severity: fail
+    params:
+      min: 70000
+      max: 200000
+    description: WFP panel cardinality after monthly aggregation.
+
+  - id: Q004
+    name: dim_date_row_count
+    layer: gold
+    type: row_count
+    table: dim_date
+    severity: fail
+    params:
+      min: 4018
+      max: 4020
+    description: >
+      2016-01-01 to 2026-12-31 is 4018 days, plus one Unknown member.
+
+  - id: Q005
+    name: dim_geography_current_members
+    layer: gold
+    type: row_count
+    table: dim_geography
+    severity: fail
+    params:
+      min: 300
+      max: 2000
+      predicate: is_current
+    description: >
+      265 NYC zones + 37 Nigerian states + the WFP markets + one city member
+      + Unknown. A count below this means a source failed to contribute.
+
+  # ------------------------------------------------------------ null rates
+  - id: Q010
+    name: fact_trip_pickup_geo_not_null
+    layer: gold
+    type: null_rate
+    table: fact_trip
+    column: pickup_geo_key
+    severity: fail
+    params: {max_pct: 0.0}
+
+  - id: Q011
+    name: fact_trip_date_key_not_null
+    layer: gold
+    type: null_rate
+    table: fact_trip
+    column: pickup_date_key
+    severity: fail
+    params: {max_pct: 0.0}
+
+  - id: Q012
+    name: fact_trip_passenger_count_nulls
+    layer: gold
+    type: null_rate
+    table: fact_trip
+    column: passenger_count
+    severity: warn
+    params: {max_pct: 5.0}
+    description: >
+      TLC leaves passenger_count unset when the vendor did not transmit it.
+      Reported rather than defaulted: a substituted zero would be fabrication.
+
+  - id: Q013
+    name: fact_trip_congestion_surcharge_nulls
+    layer: gold
+    type: null_rate
+    table: fact_trip
+    column: congestion_surcharge
+    severity: warn
+    params: {max_pct: 5.0}
+
+  - id: Q014
+    name: fact_market_price_usd_nulls
+    layer: gold
+    type: null_rate
+    table: fact_market_price_monthly
+    column: price_usd
+    severity: warn
+    params: {max_pct: 10.0}
+    description: WFP does not publish a USD conversion for every observation.
+
+  - id: Q015
+    name: fact_fuel_price_not_null
+    layer: gold
+    type: null_rate
+    table: fact_fuel_price_monthly
+    column: price_ngn
+    severity: fail
+    params: {max_pct: 0.0}
+
+  # -------------------------------------------------- referential integrity
+  - id: Q020
+    name: ri_fact_trip_pickup_geo
+    layer: gold
+    type: referential_integrity
+    table: fact_trip
+    column: pickup_geo_key
+    severity: fail
+    params:
+      parent: dim_geography
+      parent_key: geo_key
+      max_unknown_pct: 2.0
+
+  - id: Q021
+    name: ri_fact_trip_dropoff_geo
+    layer: gold
+    type: referential_integrity
+    table: fact_trip
+    column: dropoff_geo_key
+    severity: fail
+    params:
+      parent: dim_geography
+      parent_key: geo_key
+      max_unknown_pct: 2.0
+
+  - id: Q022
+    name: ri_fact_trip_pickup_date
+    layer: gold
+    type: referential_integrity
+    table: fact_trip
+    column: pickup_date_key
+    severity: fail
+    params:
+      parent: dim_date
+      parent_key: date_key
+      max_unknown_pct: 0.01
+    description: >
+      Unknown pickup dates are the out-of-window defect in the official files.
+      The ceiling is deliberately tight: 0.01 per cent is far above the observed
+      rate, so a real regression would breach it.
+
+  - id: Q023
+    name: ri_fact_trip_payment
+    layer: gold
+    type: referential_integrity
+    table: fact_trip
+    column: payment_key
+    severity: fail
+    params: {parent: dim_payment_type, parent_key: payment_key, max_unknown_pct: 1.0}
+
+  - id: Q024
+    name: ri_fact_trip_rate_code
+    layer: gold
+    type: referential_integrity
+    table: fact_trip
+    column: rate_key
+    severity: fail
+    params: {parent: dim_rate_code, parent_key: rate_key, max_unknown_pct: 1.0}
+    description: >
+      Observed: roughly 9.8 per cent of 2024 trips carry no RatecodeID at all --
+      the same rows that carry no passenger_count and no congestion_surcharge,
+      and every trip recorded by vendor 6. They are routed to the Unknown member
+      and reported here. That is not a broken key: zero orphans exist, no row
+      was lost, and inventing a rate code for them would be fabrication. The
+      one per cent tolerance is left deliberately tight so the rate stays
+      visible in the report rather than being normalised away.
+
+  - id: Q025
+    name: ri_fact_trip_vendor
+    layer: gold
+    type: referential_integrity
+    table: fact_trip
+    column: vendor_key
+    severity: fail
+    params: {parent: dim_vendor, parent_key: vendor_key, max_unknown_pct: 1.0}
+
+  - id: Q026
+    name: ri_fact_trip_flags
+    layer: gold
+    type: referential_integrity
+    table: fact_trip
+    column: flag_key
+    severity: fail
+    params: {parent: dim_trip_flags, parent_key: flag_key, max_unknown_pct: 0.0}
+
+  - id: Q027
+    name: ri_fact_trip_mode
+    layer: gold
+    type: referential_integrity
+    table: fact_trip
+    column: mode_key
+    severity: fail
+    params: {parent: dim_transport_mode, parent_key: mode_key, max_unknown_pct: 0.0}
+
+  - id: Q028
+    name: ri_fact_market_price_geo
+    layer: gold
+    type: referential_integrity
+    table: fact_market_price_monthly
+    column: geo_key
+    severity: fail
+    params: {parent: dim_geography, parent_key: geo_key, max_unknown_pct: 1.0}
+
+  - id: Q029
+    name: ri_fact_market_price_commodity
+    layer: gold
+    type: referential_integrity
+    table: fact_market_price_monthly
+    column: commodity_key
+    severity: fail
+    params: {parent: dim_commodity, parent_key: commodity_key, max_unknown_pct: 1.0}
+
+  - id: Q030
+    name: ri_fact_fuel_price_geo
+    layer: gold
+    type: referential_integrity
+    table: fact_fuel_price_monthly
+    column: geo_key
+    severity: fail
+    params: {parent: dim_geography, parent_key: geo_key, max_unknown_pct: 0.0}
+
+  - id: Q031
+    name: ri_fact_trip_daily_agg_geo
+    layer: gold
+    type: referential_integrity
+    table: fact_trip_daily_agg
+    column: pickup_geo_key
+    severity: fail
+    params: {parent: dim_geography, parent_key: geo_key, max_unknown_pct: 2.0}
+
+  # ---------------------------------------------------- ranges and domains
+  - id: Q040
+    name: fact_trip_no_negative_fare
+    layer: gold
+    type: range
+    table: fact_trip
+    column: fare_amount
+    severity: fail
+    params: {min: 0}
+    description: >
+      Negative fares are voided or disputed trips in TLC's own dictionary. They
+      are rejected at the silver boundary and counted by reason in the
+      reconciliation table, so by the time a row reaches gold this must hold.
+
+  - id: Q041
+    name: fact_trip_no_negative_total
+    layer: gold
+    type: range
+    table: fact_trip
+    column: total_amount
+    severity: fail
+    params: {min: 0}
+
+  - id: Q042
+    name: fact_trip_no_negative_distance
+    layer: gold
+    type: range
+    table: fact_trip
+    column: trip_distance_miles
+    severity: fail
+    params: {min: 0, max: 500}
+
+  - id: Q043
+    name: fact_trip_duration_positive
+    layer: gold
+    type: range
+    table: fact_trip
+    column: trip_duration_seconds
+    severity: fail
+    params: {min: 1, max: 86400}
+
+  - id: Q044
+    name: fact_trip_passenger_count_plausible
+    layer: gold
+    type: range
+    table: fact_trip
+    column: passenger_count
+    severity: fail
+    params: {min: 0, max: 9}
+
+  - id: Q045
+    name: fact_trip_speed_plausible
+    layer: gold
+    type: range
+    table: fact_trip
+    column: avg_speed_mph
+    severity: warn
+    params: {min: 0, max: 100}
+    description: >
+      Implausible speeds usually indicate a bad odometer or timestamp rather than
+      an invalid trip, so they are reported rather than rejected. A3 treats speed
+      as a congestion proxy and must know how often it is untrustworthy.
+
+  - id: Q046
+    name: fact_fuel_price_plausible
+    layer: gold
+    type: range
+    table: fact_fuel_price_monthly
+    column: price_ngn
+    severity: fail
+    params: {min: 100, max: 3000}
+
+  - id: Q047
+    name: fact_market_price_positive
+    layer: gold
+    type: range
+    table: fact_market_price_monthly
+    column: price_ngn
+    severity: fail
+    params: {min: 0.0001}
+
+  - id: Q048
+    name: fact_trip_pickup_hour_domain
+    layer: gold
+    type: range
+    table: fact_trip
+    column: pickup_hour
+    severity: fail
+    params: {min: 0, max: 23}
+
+  - id: Q050
+    name: dim_geography_admin_level_domain
+    layer: gold
+    type: domain
+    table: dim_geography
+    column: admin_level
+    severity: fail
+    params:
+      allowed: [zone, market, state, city, unknown]
+    description: >
+      'city' is a documented extension carrying the single New York City member
+      that the optional fact_weather_daily references.
+
+  - id: Q051
+    name: dim_geography_country_domain
+    layer: gold
+    type: domain
+    table: dim_geography
+    column: country
+    severity: fail
+    params:
+      allowed: ["United States", "Nigeria", "Unknown"]
+
+  - id: Q052
+    name: dim_geography_nigeria_state_domain
+    layer: gold
+    type: domain
+    table: dim_geography
+    column: geo_name
+    severity: fail
+    params:
+      allowed_from: nigeria_states
+      predicate: "admin_level = 'state'"
+    description: >
+      Every state member must be one of the 36 states or the FCT, as defined by
+      config/nigeria_states.py. This is the rule that catches a zone subtotal or
+      a Grand Total row leaking out of an NBS workbook.
+
+  - id: Q053
+    name: dim_commodity_unit_present
+    layer: gold
+    type: null_rate
+    table: dim_commodity
+    column: unit
+    severity: fail
+    params: {max_pct: 0.0}
+
+  # ---------------------------------------------------- temporal sanity
+  - id: Q060
+    name: fact_trip_dropoff_after_pickup
+    layer: gold
+    type: expression
+    table: fact_trip
+    severity: fail
+    params:
+      predicate: "dropoff_date_key >= pickup_date_key OR pickup_date_key = -1"
+    description: A dropoff cannot precede its pickup once dates are resolved.
+
+  - id: Q061
+    name: fact_trip_within_declared_window
+    layer: gold
+    type: expression
+    table: fact_trip
+    severity: warn
+    params:
+      predicate: "pickup_date_key BETWEEN 20240101 AND 20241231"
+    description: >
+      Quantifies the confirmed defect in the official 2024 files rather than
+      hiding it. Warn, not fail: these rows are real published data.
+
+  - id: Q062
+    name: fact_fuel_price_month_key_shape
+    layer: gold
+    type: expression
+    table: fact_fuel_price_monthly
+    severity: fail
+    params:
+      predicate: "month_key % 100 = 1 AND month_key BETWEEN 20230101 AND 20301201"
+    description: month_key must be YYYYMM01.
+
+  - id: Q063
+    name: fact_market_price_month_key_shape
+    layer: gold
+    type: expression
+    table: fact_market_price_monthly
+    severity: fail
+    params:
+      predicate: "month_key % 100 = 1"
+
+  # --------------------------------------------- uniqueness and duplicates
+  - id: Q070
+    name: unique_dim_date_key
+    layer: gold
+    type: unique
+    table: dim_date
+    severity: fail
+    params: {columns: [date_key]}
+
+  - id: Q071
+    name: unique_dim_geography_key
+    layer: gold
+    type: unique
+    table: dim_geography
+    severity: fail
+    params: {columns: [geo_key]}
+
+  - id: Q072
+    name: unique_dim_commodity_key
+    layer: gold
+    type: unique
+    table: dim_commodity
+    severity: fail
+    params: {columns: [commodity_key]}
+
+  - id: Q073
+    name: unique_dim_trip_flags_key
+    layer: gold
+    type: unique
+    table: dim_trip_flags
+    severity: fail
+    params: {columns: [flag_key]}
+
+  - id: Q074
+    name: unique_dim_payment_type_key
+    layer: gold
+    type: unique
+    table: dim_payment_type
+    severity: fail
+    params: {columns: [payment_key]}
+
+  - id: Q075
+    name: unique_dim_rate_code_key
+    layer: gold
+    type: unique
+    table: dim_rate_code
+    severity: fail
+    params: {columns: [rate_key]}
+
+  - id: Q076
+    name: unique_dim_vendor_key
+    layer: gold
+    type: unique
+    table: dim_vendor
+    severity: fail
+    params: {columns: [vendor_key]}
+
+  - id: Q077
+    name: unique_dim_transport_mode_key
+    layer: gold
+    type: unique
+    table: dim_transport_mode
+    severity: fail
+    params: {columns: [mode_key]}
+
+  - id: Q078
+    name: scd2_one_current_row_per_natural_key
+    layer: gold
+    type: unique
+    table: dim_geography
+    severity: fail
+    params:
+      columns: [geo_code, country, admin_level]
+      predicate: is_current
+    description: >
+      The defining Type 2 invariant: a natural key may have many versions but
+      exactly one current row.
+
+  - id: Q080
+    name: fact_fuel_price_natural_key_unique
+    layer: gold
+    type: unique
+    table: fact_fuel_price_monthly
+    severity: fail
+    params: {columns: [month_key, geo_key, fuel_type]}
+
+  - id: Q081
+    name: fact_market_price_natural_key_unique
+    layer: gold
+    type: unique
+    table: fact_market_price_monthly
+    severity: fail
+    params: {columns: [month_key, geo_key, commodity_key, price_type]}
+
+  - id: Q082
+    name: fact_trip_daily_agg_natural_key_unique
+    layer: gold
+    type: unique
+    table: fact_trip_daily_agg
+    severity: fail
+    params: {columns: [date_key, pickup_geo_key, mode_key]}
+
+  - id: Q083
+    name: fact_trip_duplicate_business_keys
+    layer: gold
+    type: duplicates
+    table: fact_trip
+    severity: warn
+    params: {columns: [trip_id]}
+    description: >
+      TLC publishes no trip identifier, so trip_id is a hash of the row's
+      business content. Rows that collide are field-for-field identical, which
+      cannot be distinguished from two genuinely coincident trips without a
+      vendor-issued id. The rate is therefore REPORTED and the rows RETAINED;
+      deleting them would assert an unverifiable claim about the world.
+      See docs/methodology_notes.md.
+
+  # ------------------------------------------------------- silver boundary
+  - id: Q090
+    name: silver_wfp_price_positive
+    layer: silver
+    type: range
+    table: silver_wfp_prices
+    column: price_ngn
+    severity: fail
+    params: {min: 0.0001}
+
+  - id: Q091
+    name: silver_nbs_state_domain
+    layer: silver
+    type: domain
+    table: silver_nbs_pms
+    column: state
+    severity: fail
+    params:
+      allowed_from: nigeria_states
+    description: >
+      The rule that proves no geopolitical-zone subtotal or Grand Total row
+      survived the workbook parser into the fuel panel.
+
+  - id: Q092
+    name: silver_zones_borough_count
+    layer: silver
+    type: row_count
+    table: silver_nyc_zones
+    severity: warn
+    params: {min: 260, max: 270}

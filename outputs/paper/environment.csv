@@ -1,0 +1,28 @@
+category,key,value,source
+host,machine,HP EliteBook 840 G5,user-supplied (CONTEXT section of the repair-pass instructions)
+host,cpu,Intel Core i7-8650U @ 1.90 GHz,user-supplied
+host,cores_threads,4 cores / 8 threads,user-supplied
+host,ram_gb,16 GB (15.9 usable),user-supplied
+host,architecture,64-bit x64,user-supplied
+host,os,Windows,user-supplied
+host,container_runtime,Docker Desktop,user-supplied
+container_image,repository_tag,csc796-mobility-platform:latest,docker images (this session)
+container_image,base_image,python:3.11-slim-bookworm@sha256:528257d48c1da0dcecc2e725d1ae34498d60c965f1241e39cd6a85a8859bdf84,Dockerfile FROM line (digest-pinned)
+container_image,os,Debian bookworm,Dockerfile base image
+container_image,architecture,amd64,docker images (this session)
+container_image,image_size,1.05 GB,docker images (this session)
+container_limits,cpus,4,docker-compose.yml deploy.resources.limits.cpus
+container_limits,memory,8G,docker-compose.yml deploy.resources.limits.memory
+container_limits,duckdb_threads,4,docker-compose.yml environment.DUCKDB_THREADS
+container_limits,duckdb_memory_limit,6GB,docker-compose.yml environment.DUCKDB_MEMORY_LIMIT
+runtime,python_version,3.11.16,"python -c 'import sys; print(sys.version)' run inside the live container, this session"
+runtime,python_full_version_string,"3.11.16 (main, Sep  1 2026, 00:14:22) [GCC 12.2.0]",live container, this session
+runtime,platform,Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36,live container (platform.platform()), this session
+library,duckdb,1.1.3,live container import, this session (matches requirements.txt pin)
+library,lightgbm,4.5.0,live container import, this session (matches requirements.txt pin)
+library,pandas,2.2.3,live container import, this session (matches requirements.txt pin)
+library,pyarrow,18.1.0,live container import, this session (matches requirements.txt pin)
+library,numpy,2.1.3,live container import, this session (matches requirements.txt pin)
+library,scikit-learn,1.5.2,live container import, this session (matches requirements.txt pin)
+library,scipy,1.17.1,"live container import, this session (transitive dependency of scikit-learn/lightgbm; used by src/modelling/encoders.py for the V4a scipy.sparse one-hot matrix)"
+library,matplotlib,3.9.2,"live container import, this session (used by src/viz/figures.py and every notebook figure cell, including the Task 7 extrapolation-ceiling figure)"

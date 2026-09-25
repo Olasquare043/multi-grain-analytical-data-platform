@@ -1,0 +1,17 @@
+missing_passenger_count,missing_congestion_surcharge,missing_rate_code,missing_airport_fee,trip_count,vendor_name(s)_present_in_this_pattern,pct_of_trips,pattern_signature
+False,False,False,False,36459364,"Creative Mobile Technologies, LLC;Curb Mobility, LLC",90.198842,----
+True,True,True,True,3961736,"Creative Mobile Technologies, LLC;Curb Mobility, LLC;Myle Technologies Inc",9.801158,PCRA
+False,False,True,False,0,,0.0,--R-
+False,False,False,True,0,,0.0,---A
+False,True,False,False,0,,0.0,-C--
+False,True,False,True,0,,0.0,-C-A
+False,True,True,False,0,,0.0,-CR-
+False,False,True,True,0,,0.0,--RA
+False,True,True,True,0,,0.0,-CRA
+True,False,False,False,0,,0.0,P---
+True,False,True,False,0,,0.0,P-R-
+True,False,False,True,0,,0.0,P--A
+True,False,True,True,0,,0.0,P-RA
+True,True,False,False,0,,0.0,PC--
+True,True,False,True,0,,0.0,PC-A
+True,True,True,False,0,,0.0,PCR-

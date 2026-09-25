@@ -1,0 +1,2271 @@
+{
+  "project": "csc796-mobility-platform",
+  "paper": "Engineering a Multi-Grain Analytical Data Platform for the Economics of Movement: A Comparative Data Engineering Case Study of New York City Trip Records and Nigerian Price Statistics",
+  "run_started_utc": "2026-09-14T15:03:00.330757+00:00",
+  "run_finished_utc": "2026-09-14T17:35:40.366002+00:00",
+  "environment": {
+    "python": "3.11.16",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+    "machine": "x86_64",
+    "cpu_limit_declared": "4",
+    "memory_limit_gb_declared": "8",
+    "duckdb_threads": 4,
+    "duckdb_memory_limit": "6GB",
+    "disk_budget_gb": 3.0,
+    "runtime_budget_minutes": 20
+  },
+  "inputs": {
+    "nyc_zones": [
+      {
+        "filename": "taxi_zone_lookup.csv",
+        "path": "data/raw/nyc/taxi_zone_lookup.csv",
+        "bytes": 12331,
+        "bytes_human": "12.0 KB",
+        "sha256": "1a99e105092230f8620f301edcca7f80d3080642ff404d28ed957d3fa222c8ed",
+        "row_count": 265
+      }
+    ],
+    "nyc_trips": [
+      {
+        "filename": "yellow_tripdata_2024-01.parquet",
+        "path": "data/raw/nyc/yellow_tripdata_2024-01.parquet",
+        "bytes": 49961641,
+        "bytes_human": "47.6 MB",
+        "sha256": "c4d59da7bbc8abaeeeb1727947ee93d9891a71acb42854bd80db1571b2030510",
+        "row_count": 2964624
+      },
+      {
+        "filename": "yellow_tripdata_2024-02.parquet",
+        "path": "data/raw/nyc/yellow_tripdata_2024-02.parquet",
+        "bytes": 50349284,
+        "bytes_human": "48.0 MB",
+        "sha256": "c76c43c18c6c6664080dd920baab4928988d5786a6b65980792ca7cd796f9f20",
+        "row_count": 3007526
+      },
+      {
+        "filename": "yellow_tripdata_2024-03.parquet",
+        "path": "data/raw/nyc/yellow_tripdata_2024-03.parquet",
+        "bytes": 60078280,
+        "bytes_human": "57.3 MB",
+        "sha256": "2d4cdc8fb96726cdd3803b13b02d2e61e71d45720aff0ebc693a8bdd1f249823",
+        "row_count": 3582628
+      },
+      {
+        "filename": "yellow_tripdata_2024-04.parquet",
+        "path": "data/raw/nyc/yellow_tripdata_2024-04.parquet",
+        "bytes": 59133625,
+        "bytes_human": "56.4 MB",
+        "sha256": "ce37f736c7cf9e92164c850ef2b502a8f7bb590fc1804b6edbcb80293da01b89",
+        "row_count": 3514289
+      },
+      {
+        "filename": "yellow_tripdata_2024-05.parquet",
+        "path": "data/raw/nyc/yellow_tripdata_2024-05.parquet",
+        "bytes": 62553128,
+        "bytes_human": "59.7 MB",
+        "sha256": "1974230be2b5a3ea92e47b5eb77f32dbf1de896d81ad8df4ab6faba52749ad23",
+        "row_count": 3723833
+      },
+      {
+        "filename": "yellow_tripdata_2024-06.parquet",
+        "path": "data/raw/nyc/yellow_tripdata_2024-06.parquet",
+        "bytes": 59859922,
+        "bytes_human": "57.1 MB",
+        "sha256": "677cf14c8347f745b583f012fbdba072334c6c4efa17bfd6a64369f2ba30329c",
+        "row_count": 3539193
+      },
+      {
+        "filename": "yellow_tripdata_2024-07.parquet",
+        "path": "data/raw/nyc/yellow_tripdata_2024-07.parquet",
+        "bytes": 52299432,
+        "bytes_human": "49.9 MB",
+        "sha256": "af12d6b04daeb78550799ae99933d495b27d715b6dbb0fad9bb750a4537d3070",
+        "row_count": 3076903
+      },
+      {
+        "filename": "yellow_tripdata_2024-08.parquet",
+        "path": "data/raw/nyc/yellow_tripdata_2024-08.parquet",
+        "bytes": 51067350,
+        "bytes_human": "48.7 MB",
+        "sha256": "7315643dd16bafc03e27d9903edbfd35404c2550a695d0da0a3e73852d940cfb",
+        "row_count": 2979183
+      },
+      {
+        "filename": "yellow_tripdata_2024-09.parquet",
+        "path": "data/raw/nyc/yellow_tripdata_2024-09.parquet",
+        "bytes": 61170186,
+        "bytes_human": "58.3 MB",
+        "sha256": "2f42e4a383a6635de803001462848d0aee2b47f6ce899126805d2d05361fb843",
+        "row_count": 3633030
+      },
+      {
+        "filename": "yellow_tripdata_2024-10.parquet",
+        "path": "data/raw/nyc/yellow_tripdata_2024-10.parquet",
+        "bytes": 64346071,
+        "bytes_human": "61.4 MB",
+        "sha256": "d19fe05aa0b259af24eb47051735293287f1e6dc263ba04030ec1ab4c6ec2650",
+        "row_count": 3833771
+      },
+      {
+        "filename": "yellow_tripdata_2024-11.parquet",
+        "path": "data/raw/nyc/yellow_tripdata_2024-11.parquet",
+        "bytes": 60658709,
+        "bytes_human": "57.8 MB",
+        "sha256": "5ef321876de5007a7c147a347389133fc94fd7ac28f82eb1d57d8f2cf05cfd3b",
+        "row_count": 3646369
+      },
+      {
+        "filename": "yellow_tripdata_2024-12.parquet",
+        "path": "data/raw/nyc/yellow_tripdata_2024-12.parquet",
+        "bytes": 61524085,
+        "bytes_human": "58.7 MB",
+        "sha256": "41ebf7db80bebde60c58e5143c14cdf38ad04a0f3e3ff44215b3e240d55f6c78",
+        "row_count": 3668371
+      }
+    ],
+    "hdx_prices": [
+      {
+        "filename": "wfp_food_prices_nga.csv",
+        "path": "data/raw/hdx/wfp_food_prices_nga.csv",
+        "bytes": 10658212,
+        "bytes_human": "10.2 MB",
+        "sha256": "6b4b62cd3d87f8d7eb6ad2a27a7796519f8b2039c1d083015f703db84f84a91c",
+        "row_count": 87384
+      }
+    ],
+    "hdx_markets": [
+      {
+        "filename": "wfp_markets_nga.csv",
+        "path": "data/raw/hdx/wfp_markets_nga.csv",
+        "bytes": 5349,
+        "bytes_human": "5.2 KB",
+        "sha256": "b275eac2d685b88be042caf0c97a2dd80d3bd1da3fe4850d50f4ee4f2b1821cd",
+        "row_count": 118
+      }
+    ],
+    "nbs_pms": [
+      {
+        "filename": "nbs_pms_assembled.csv",
+        "path": "data/raw/nbs/nbs_pms_assembled.csv",
+        "bytes": 92389,
+        "bytes_human": "90.2 KB",
+        "sha256": "b459f750092c3039bcac77cdacbe22f0398e41f5e702b8f18f6dc165492db16d",
+        "row_count": 1147
+      },
+      {
+        "filename": "PMS_Report_MAY_2026.zip",
+        "path": "data/raw/nbs/PMS_Report_MAY_2026.zip",
+        "bytes": 742369,
+        "bytes_human": "725.0 KB",
+        "sha256": "b792493b6fb8c3ca0ce6c72e1994ffcc79e66db10896dc60e06aef78bb3cbc2e",
+        "row_count": null
+      },
+      {
+        "filename": "PMS_APRIL_2026.zip",
+        "path": "data/raw/nbs/PMS_APRIL_2026.zip",
+        "bytes": 744113,
+        "bytes_human": "726.7 KB",
+        "sha256": "b1baa24297fb0d61a91db457cde8be718600fdbb2e29e9b29222b3f71e3d050a",
+        "row_count": null
+      },
+      {
+        "filename": "PMS_Report_MARCH_2026.zip",
+        "path": "data/raw/nbs/PMS_Report_MARCH_2026.zip",
+        "bytes": 748466,
+        "bytes_human": "730.9 KB",
+        "sha256": "ad1f2b8b72fd202f584e6b2ee71c3ad77ecbf407c5ce641edd1a44b8be5cdb09",
+        "row_count": null
+      },
+      {
+        "filename": "PMS_Report_FEBRUARY_2026.zip",
+        "path": "data/raw/nbs/PMS_Report_FEBRUARY_2026.zip",
+        "bytes": 1240734,
+        "bytes_human": "1.2 MB",
+        "sha256": "e09b78474f1c08c9b2e23734edb51f1beea15ea7f938fc8c600282329547c9b7",
+        "row_count": null
+      },
+      {
+        "filename": "PMS_Report_JANUARY_2026.zip",
+        "path": "data/raw/nbs/PMS_Report_JANUARY_2026.zip",
+        "bytes": 741936,
+        "bytes_human": "724.5 KB",
+        "sha256": "4059a58d140475fec5ce1b98595ab715c2558bf69cea402894665df5200d83bd",
+        "row_count": null
+      },
+      {
+        "filename": "PMS_Report_AUG_SEPT_2025.zip",
+        "path": "data/raw/nbs/PMS_Report_AUG_SEPT_2025.zip",
+        "bytes": 2011234,
+        "bytes_human": "1.9 MB",
+        "sha256": "e8e9b77757cac2ad9d0fbfddfd6141e5d958a39482f492c3834548d7cee97fef",
+        "row_count": null
+      },
+      {
+        "filename": "PMS_DECEMBER_2025.zip",
+        "path": "data/raw/nbs/PMS_DECEMBER_2025.zip",
+        "bytes": 1169149,
+        "bytes_human": "1.1 MB",
+        "sha256": "47dc9822a6b09dff4b5a0ff1542a352cf29ef9348cfd12bc15090d735b98df15",
+        "row_count": null
+      },
+      {
+        "filename": "PMS_REPORT_NOV_2025.zip",
+        "path": "data/raw/nbs/PMS_REPORT_NOV_2025.zip",
+        "bytes": 673736,
+        "bytes_human": "657.9 KB",
+        "sha256": "33712f7d50de4d4a59119491475dfa9a00c76a04462242ceea28cb2e9c649b85",
+        "row_count": null
+      },
+      {
+        "filename": "PMS%20Report%20OCTOBER%202025.zip",
+        "path": "data/raw/nbs/PMS%20Report%20OCTOBER%202025.zip",
+        "bytes": 669900,
+        "bytes_human": "654.2 KB",
+        "sha256": "57012577068574f6c5eeed5998d7fb2ce7270b360a85a64796871a6cff2cfae2",
+        "row_count": null
+      },
+      {
+        "filename": "PMS_Report_JULY_2025.zip",
+        "path": "data/raw/nbs/PMS_Report_JULY_2025.zip",
+        "bytes": 674365,
+        "bytes_human": "658.6 KB",
+        "sha256": "13c066ee616fe6a21090fae78b6d42212a4b7c0b3bd22906518a484f8c2c341a",
+        "row_count": null
+      },
+      {
+        "filename": "PMS_Report_June_2025.xlsx",
+        "path": "data/raw/nbs/PMS_Report_June_2025.xlsx",
+        "bytes": 15162,
+        "bytes_human": "14.8 KB",
+        "sha256": "6d5023bfafea37753809fca76f138280e274879f09502ce5c26d9a287efbf6bf",
+        "row_count": null
+      },
+      {
+        "filename": "Fuel_Report_May_2025.xlsx",
+        "path": "data/raw/nbs/Fuel_Report_May_2025.xlsx",
+        "bytes": 15190,
+        "bytes_human": "14.8 KB",
+        "sha256": "123b958d92f8ba7d59de33c8a52da143b823b3196a78e0354afd9da6a495d2a3",
+        "row_count": null
+      },
+      {
+        "filename": "Fuel_Report_April_2025.xlsx",
+        "path": "data/raw/nbs/Fuel_Report_April_2025.xlsx",
+        "bytes": 14949,
+        "bytes_human": "14.6 KB",
+        "sha256": "26f18603202a96c5335daee249b3ec63dd6ebb614b56e3a2c0d5c26d179dab02",
+        "row_count": null
+      },
+      {
+        "filename": "PMS%20Report%20March%202025.xlsx",
+        "path": "data/raw/nbs/PMS%20Report%20March%202025.xlsx",
+        "bytes": 12180,
+        "bytes_human": "11.9 KB",
+        "sha256": "c7be2f3bc1220432cae450aef4d834403dff578bf3e44b2b9c3b0878cdf4aee0",
+        "row_count": null
+      },
+      {
+        "filename": "PMS_FEB_2025.xlsx",
+        "path": "data/raw/nbs/PMS_FEB_2025.xlsx",
+        "bytes": 11968,
+        "bytes_human": "11.7 KB",
+        "sha256": "850a76dcd56ced74da8470a7a01d7286de1eaf77b6aa6f5ed2d79c5d5c517324",
+        "row_count": null
+      },
+      {
+        "filename": "PMS_Jan_2025.xlsx",
+        "path": "data/raw/nbs/PMS_Jan_2025.xlsx",
+        "bytes": 12378,
+        "bytes_human": "12.1 KB",
+        "sha256": "166a687292b1d729a0c23f38fa5f505af008936349196ccc6bf6e66bbcfbc792",
+        "row_count": null
+      },
+      {
+        "filename": "PMS%20DECEMBER%202024.xlsx",
+        "path": "data/raw/nbs/PMS%20DECEMBER%202024.xlsx",
+        "bytes": 16887,
+        "bytes_human": "16.5 KB",
+        "sha256": "867601856d29280d1dfc56b67b46e5c35cd89c6cc59301e73de525a02726ba6c",
+        "row_count": null
+      },
+      {
+        "filename": "PMS%20NOV%202024%20REPORT.xlsx",
+        "path": "data/raw/nbs/PMS%20NOV%202024%20REPORT.xlsx",
+        "bytes": 15219,
+        "bytes_human": "14.9 KB",
+        "sha256": "c6ac797a3868c065c082fd6a8c42554b32908e10c97de6774a760b24e36482db",
+        "row_count": null
+      }
+    ],
+    "weather": [
+      {
+        "filename": "open_meteo_nyc_2024.json",
+        "path": "data/raw/weather/open_meteo_nyc_2024.json",
+        "bytes": 29017,
+        "bytes_human": "28.3 KB",
+        "sha256": "8db8794a6173166c227dc9d2248d800c8c350073ba531f3755f9a87efc307c35",
+        "row_count": 366
+      }
+    ]
+  },
+  "rows_loaded": {
+    "fact_trip": {
+      "rows": 40421155
+    },
+    "fact_market_price_monthly": {
+      "rows": 87384
+    },
+    "fact_fuel_price_monthly": {
+      "rows": 1147
+    },
+    "fact_trip_daily_agg": {
+      "rows": 84910
+    },
+    "fact_weather_daily": {
+      "rows": 366
+    }
+  },
+  "artefact_sizes": {
+    "fact_trip": {
+      "bytes": 1535395852,
+      "bytes_human": "1.4 GB",
+      "path": "fact_trip"
+    }
+  },
+  "quality": {
+    "rules_evaluated": 56,
+    "passed": 50,
+    "warned": 6,
+    "failed": 0,
+    "skipped": 0,
+    "gate": "CLEAR",
+    "failed_rules": [],
+    "warned_rules": [
+      "Q012",
+      "Q013",
+      "Q024",
+      "Q045",
+      "Q061",
+      "Q083"
+    ],
+    "by_status": {
+      "PASS": 50,
+      "WARN": 6
+    },
+    "nbs_reconciliation_all_within_tolerance": true,
+    "nbs_reconciliation": [
+      {
+        "month": "2023-11",
+        "published_national_mean_ngn": 648.93,
+        "assembled_national_mean_ngn": 648.93,
+        "delta": 0.0,
+        "tolerance": 0.05,
+        "within_tolerance": true,
+        "reporting_states": 37
+      },
+      {
+        "month": "2023-12",
+        "published_national_mean_ngn": 671.86,
+        "assembled_national_mean_ngn": 671.86,
+        "delta": 0.0,
+        "tolerance": 0.05,
+        "within_tolerance": true,
+        "reporting_states": 37
+      },
+      {
+        "month": "2024-05",
+        "published_national_mean_ngn": 769.62,
+        "assembled_national_mean_ngn": 769.62,
+        "delta": 0.0,
+        "tolerance": 0.05,
+        "within_tolerance": true,
+        "reporting_states": 37
+      }
+    ],
+    "reconciliation": [
+      {
+        "source": "A. NYC TLC Yellow Taxi 2024",
+        "pattern": "bulk binary download",
+        "raw_rows_in": 41169720,
+        "rows_rejected": 748565,
+        "rows_loaded": 40421155,
+        "target_table": "fact_trip",
+        "reject_reasons": "negative_money=733,787; non_positive_duration=13,510; implausible_distance=1,038; duration_exceeds_ceiling=230",
+        "retention_pct": 98.1818
+      },
+      {
+        "source": "B. NYC Taxi Zone Lookup",
+        "pattern": "bulk binary download",
+        "raw_rows_in": 265,
+        "rows_rejected": 0,
+        "rows_loaded": 265,
+        "target_table": "dim_geography (zone members)",
+        "reject_reasons": "none",
+        "retention_pct": 100.0
+      },
+      {
+        "source": "C. WFP Nigeria Market Prices",
+        "pattern": "open data API",
+        "raw_rows_in": 87384,
+        "rows_rejected": 0,
+        "rows_loaded": 87384,
+        "target_table": "fact_market_price_monthly",
+        "reject_reasons": "none",
+        "retention_pct": 100.0
+      },
+      {
+        "source": "D. NBS PMS Price Watch",
+        "pattern": "HTML scrape + Excel parse",
+        "raw_rows_in": 1147,
+        "rows_rejected": 0,
+        "rows_loaded": 1147,
+        "target_table": "fact_fuel_price_monthly",
+        "reject_reasons": "none",
+        "retention_pct": 100.0
+      },
+      {
+        "source": "E. Open-Meteo NYC daily archive (optional)",
+        "pattern": "REST/JSON",
+        "raw_rows_in": 366,
+        "rows_rejected": 0,
+        "rows_loaded": 366,
+        "target_table": "fact_weather_daily",
+        "reject_reasons": "none",
+        "retention_pct": 100.0
+      }
+    ]
+  },
+  "reconciliation": {
+    "nbs": [
+      {
+        "month": "2023-11",
+        "published_national_mean_ngn": 648.93,
+        "assembled_national_mean_ngn": 648.93,
+        "delta": 0.0,
+        "tolerance": 0.05,
+        "within_tolerance": true,
+        "reporting_states": 37
+      },
+      {
+        "month": "2023-12",
+        "published_national_mean_ngn": 671.86,
+        "assembled_national_mean_ngn": 671.86,
+        "delta": 0.0,
+        "tolerance": 0.05,
+        "within_tolerance": true,
+        "reporting_states": 37
+      },
+      {
+        "month": "2024-05",
+        "published_national_mean_ngn": 769.62,
+        "assembled_national_mean_ngn": 769.62,
+        "delta": 0.0,
+        "tolerance": 0.05,
+        "within_tolerance": true,
+        "reporting_states": 37
+      }
+    ],
+    "all_within_tolerance": true,
+    "per_source": [
+      {
+        "source": "A. NYC TLC Yellow Taxi 2024",
+        "pattern": "bulk binary download",
+        "raw_rows_in": 41169720,
+        "rows_rejected": 748565,
+        "rows_loaded": 40421155,
+        "target_table": "fact_trip",
+        "reject_reasons": "negative_money=733,787; non_positive_duration=13,510; implausible_distance=1,038; duration_exceeds_ceiling=230",
+        "retention_pct": 98.1818
+      },
+      {
+        "source": "B. NYC Taxi Zone Lookup",
+        "pattern": "bulk binary download",
+        "raw_rows_in": 265,
+        "rows_rejected": 0,
+        "rows_loaded": 265,
+        "target_table": "dim_geography (zone members)",
+        "reject_reasons": "none",
+        "retention_pct": 100.0
+      },
+      {
+        "source": "C. WFP Nigeria Market Prices",
+        "pattern": "open data API",
+        "raw_rows_in": 87384,
+        "rows_rejected": 0,
+        "rows_loaded": 87384,
+        "target_table": "fact_market_price_monthly",
+        "reject_reasons": "none",
+        "retention_pct": 100.0
+      },
+      {
+        "source": "D. NBS PMS Price Watch",
+        "pattern": "HTML scrape + Excel parse",
+        "raw_rows_in": 1147,
+        "rows_rejected": 0,
+        "rows_loaded": 1147,
+        "target_table": "fact_fuel_price_monthly",
+        "reject_reasons": "none",
+        "retention_pct": 100.0
+      },
+      {
+        "source": "E. Open-Meteo NYC daily archive (optional)",
+        "pattern": "REST/JSON",
+        "raw_rows_in": 366,
+        "rows_rejected": 0,
+        "rows_loaded": 366,
+        "target_table": "fact_weather_daily",
+        "reject_reasons": "none",
+        "retention_pct": 100.0
+      }
+    ]
+  },
+  "stage_timings_seconds": {
+    "extract: NYC TLC trips + zone lookup (bulk binary download)": 1.563,
+    "extract: WFP Nigeria prices via HDX (open data API)": 4.746,
+    "extract: NBS PMS price watch (HTML scrape + Excel parse)": 3.037,
+    "extract: Open-Meteo NYC daily archive (REST/JSON, optional)": 0.023,
+    "bronze: register and type raw artefacts": 9.306,
+    "silver: cleanse and conform": 14.494,
+    "gold: dimensions": 14.496,
+    "gold: dim_geography (Type 2 SCD)": 0.334,
+    "gold: facts": 527.133,
+    "gold: catalogue and Parquet export": 14.87,
+    "quality: rule evaluation and reconciliation": 419.851,
+    "analysis: A1-A11": 2.39,
+    "benchmark: B1 format_comparison": 148.07,
+    "benchmark: B2 partition_pruning": 57.485,
+    "benchmark: B3 aggregate_navigation": 113.76,
+    "benchmark: B4 engine_comparison": 127.882,
+    "benchmarks: B1-B4": 447.583,
+    "figures: publication charts": 76.922,
+    "docs: generated data dictionary": 8.204,
+    "verify: completion summary": 4.023,
+    "cloud: C0 verify public dataset inventory": 12.574,
+    "cloud: C1 engine_comparison_cloud": 164.463,
+    "cloud: C2 scale_behaviour": 54.721
+  },
+  "skipped": {},
+  "notes": [
+    "NYC TLC 2024: 56 of 41,169,720 trips carry a pickup timestamp outside calendar 2024 (earliest observed 2002-12-31 16:46:07). This is a defect of the official data, retained and flagged, not dropped."
+  ],
+  "library_versions": {
+    "duckdb": "1.1.3",
+    "pandas": "2.2.3",
+    "pyarrow": "18.1.0",
+    "requests": "2.34.2",
+    "matplotlib": "3.9.2",
+    "openpyxl": "3.1.5",
+    "beautifulsoup4": "4.12.3",
+    "lxml": "5.3.0",
+    "python-dateutil": "2.9.0.post0",
+    "PyYAML": "6.0.2",
+    "numpy": "2.1.3",
+    "pytest": "8.3.4",
+    "google-cloud-bigquery": "3.27.0",
+    "db-dtypes": "1.3.1"
+  },
+  "total_stage_seconds": 2227.93,
+  "total_stage_minutes": 37.13,
+  "extraction": {
+    "nyc_zones": {
+      "name": "NYC Taxi Zone Lookup",
+      "pattern": "bulk binary download",
+      "ok": true,
+      "skipped": false,
+      "reason": "",
+      "file_count": 1,
+      "total_rows": 265,
+      "diagnostics": {
+        "observed_rows": 265,
+        "expected_rows": 265,
+        "rows_match": true,
+        "boroughs": [
+          "Bronx",
+          "Brooklyn",
+          "EWR",
+          "Manhattan",
+          "N/A",
+          "Queens",
+          "Staten Island",
+          "Unknown"
+        ],
+        "borough_count": 8,
+        "boroughs_match": true
+      }
+    },
+    "nyc_trips": {
+      "name": "NYC TLC Yellow Taxi 2024",
+      "pattern": "bulk binary download",
+      "ok": true,
+      "skipped": false,
+      "reason": "",
+      "file_count": 12,
+      "total_rows": 41169720,
+      "diagnostics": {
+        "assertions_checked": 12,
+        "all_matched": true,
+        "discrepancies": {},
+        "observed_total_rows": 41169720,
+        "expected_total_rows": 41169720,
+        "schema_drift": {},
+        "data_dictionary_url": "https://www.nyc.gov/assets/tlc/downloads/pdf/data_dictionary_trip_records_yellow.pdf"
+      }
+    },
+    "hdx_prices": {
+      "name": "WFP Nigeria Market Prices",
+      "pattern": "open data API",
+      "ok": true,
+      "skipped": false,
+      "reason": "",
+      "file_count": 1,
+      "total_rows": 87384,
+      "diagnostics": {
+        "observed_rows": 87384,
+        "date_min": "2002-01-15",
+        "date_max": "2026-07-15",
+        "distinct_months": 295,
+        "states": [
+          "Abia",
+          "Adamawa",
+          "Borno",
+          "Gombe",
+          "Jigawa",
+          "Kaduna",
+          "Kano",
+          "Katsina",
+          "Kebbi",
+          "Lagos",
+          "Oyo",
+          "Sokoto",
+          "Yobe",
+          "Zamfara"
+        ],
+        "state_count": 14,
+        "market_count": 68,
+        "commodity_count": 43,
+        "categories": [
+          "cereals and tubers",
+          "meat, fish and eggs",
+          "milk and dairy",
+          "miscellaneous food",
+          "non-food",
+          "oil and fats",
+          "pulses and nuts",
+          "vegetables and fruits"
+        ],
+        "price_types": [
+          "Retail",
+          "Wholesale"
+        ],
+        "reporting_markets_per_month_min": 1,
+        "reporting_markets_per_month_max": 38,
+        "panel_is_unbalanced": true,
+        "fuel_month_min": "2014-05",
+        "fuel_month_max": "2026-07",
+        "fuel_months_observed": 110,
+        "columns": [
+          "date",
+          "admin1",
+          "admin2",
+          "market",
+          "market_id",
+          "latitude",
+          "longitude",
+          "category",
+          "commodity",
+          "commodity_id",
+          "unit",
+          "priceflag",
+          "pricetype",
+          "currency",
+          "price",
+          "usdprice"
+        ],
+        "hxl_tag_row_present": false,
+        "hxl_tags": [],
+        "expected_min_rows": 80000
+      }
+    },
+    "hdx_markets": {
+      "name": "WFP Nigeria Markets",
+      "pattern": "open data API",
+      "ok": true,
+      "skipped": false,
+      "reason": "",
+      "file_count": 1,
+      "total_rows": 118,
+      "diagnostics": {
+        "observed_rows": 118,
+        "columns": [
+          "market_id",
+          "market",
+          "countryiso3",
+          "admin1",
+          "admin2",
+          "latitude",
+          "longitude"
+        ],
+        "hxl_tag_row_present": false,
+        "distinct_markets": 118,
+        "distinct_admin1": 15
+      }
+    },
+    "nbs_pms": {
+      "name": "NBS PMS Price Watch",
+      "pattern": "HTML scrape + heterogeneous Excel parse",
+      "ok": true,
+      "skipped": false,
+      "reason": "",
+      "file_count": 19,
+      "total_rows": 1147,
+      "diagnostics": {
+        "catalogue_url": "https://microdata.nigerianstat.gov.ng/index.php/catalog/157",
+        "catalogue_files_discovered": 18,
+        "files_downloaded": 18,
+        "workbooks_parsed": 19,
+        "observations_assembled": 1147,
+        "distinct_months": 31,
+        "month_min": "2023-11",
+        "month_max": "2026-05",
+        "distinct_states": 37,
+        "month_gaps_observed": [],
+        "month_gaps_claimed_by_spec": [
+          "2024-08",
+          "2025-10",
+          "2025-11"
+        ],
+        "gaps_claimed_but_not_observed": [
+          "2024-08",
+          "2025-10",
+          "2025-11"
+        ],
+        "gaps_observed_but_not_claimed": [],
+        "excluded_non_state_labels": {
+          "AVERAGE": 19
+        },
+        "excluded_label_count": 1,
+        "implausible_price_rows": 0,
+        "national_mean_by_month": {
+          "2023-11": 648.93,
+          "2023-12": 671.86,
+          "2024-01": 668.3,
+          "2024-02": 679.36,
+          "2024-03": 696.79,
+          "2024-04": 701.24,
+          "2024-05": 769.62,
+          "2024-06": 750.17,
+          "2024-07": 770.54,
+          "2024-08": 830.46,
+          "2024-09": 1030.46,
+          "2024-10": 1184.83,
+          "2024-11": 1214.17,
+          "2024-12": 1189.12,
+          "2025-01": 1258.34,
+          "2025-02": 1245.8,
+          "2025-03": 1261.65,
+          "2025-04": 1239.33,
+          "2025-05": 1027.76,
+          "2025-06": 1037.66,
+          "2025-07": 1024.99,
+          "2025-08": 988.25,
+          "2025-09": 970.59,
+          "2025-10": 1052.31,
+          "2025-11": 1061.35,
+          "2025-12": 1048.63,
+          "2026-01": 1034.76,
+          "2026-02": 1051.47,
+          "2026-03": 1288.54,
+          "2026-04": 1532.93,
+          "2026-05": 1596.25
+        },
+        "per_file": [
+          {
+            "file": "Fuel_Report_April_2025.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Fuel April 2025",
+                "shape": [
+                  41,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 0,
+                "column_count": 7,
+                "month_columns": [
+                  "2024-04",
+                  "2025-03",
+                  "2025-04"
+                ],
+                "current_month": "2025-04",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2024-04",
+              "2025-03",
+              "2025-04"
+            ]
+          },
+          {
+            "file": "Fuel_Report_May_2025.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Fuel May 2025",
+                "shape": [
+                  41,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 0,
+                "column_count": 7,
+                "month_columns": [
+                  "2024-05",
+                  "2025-04",
+                  "2025-05"
+                ],
+                "current_month": "2025-05",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2024-05",
+              "2025-04",
+              "2025-05"
+            ]
+          },
+          {
+            "file": "PMS%20DECEMBER%202024.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Fuel December 2024",
+                "shape": [
+                  41,
+                  10
+                ],
+                "status": "parsed",
+                "header_row": 0,
+                "column_count": 10,
+                "month_columns": [
+                  "2023-12",
+                  "2024-11",
+                  "2024-12"
+                ],
+                "current_month": "2024-12",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2023-12",
+              "2024-11",
+              "2024-12"
+            ]
+          },
+          {
+            "file": "PMS%20NOV%202024%20REPORT.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "November 2024",
+                "shape": [
+                  42,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 1,
+                "column_count": 7,
+                "month_columns": [
+                  "2023-11",
+                  "2024-10",
+                  "2024-11"
+                ],
+                "current_month": "2024-11",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2023-11",
+              "2024-10",
+              "2024-11"
+            ]
+          },
+          {
+            "file": "PMS%20Report%20March%202025.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Fuel March 2025",
+                "shape": [
+                  41,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 0,
+                "column_count": 7,
+                "month_columns": [
+                  "2024-03",
+                  "2025-02",
+                  "2025-03"
+                ],
+                "current_month": "2025-03",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2024-03",
+              "2025-02",
+              "2025-03"
+            ]
+          },
+          {
+            "file": "PMS_FEB_2025.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Fuel February 2025",
+                "shape": [
+                  41,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 0,
+                "column_count": 7,
+                "month_columns": [
+                  "2024-02",
+                  "2025-01",
+                  "2025-02"
+                ],
+                "current_month": "2025-02",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2024-02",
+              "2025-01",
+              "2025-02"
+            ]
+          },
+          {
+            "file": "PMS_Jan_2025.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Fuel January 2025",
+                "shape": [
+                  41,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 0,
+                "column_count": 7,
+                "month_columns": [
+                  "2024-01",
+                  "2024-12",
+                  "2025-01"
+                ],
+                "current_month": "2025-01",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2024-01",
+              "2024-12",
+              "2025-01"
+            ]
+          },
+          {
+            "file": "PMS_Report_June_2025.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Fuel June 2025",
+                "shape": [
+                  41,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 0,
+                "column_count": 7,
+                "month_columns": [
+                  "2024-06",
+                  "2025-05",
+                  "2025-06"
+                ],
+                "current_month": "2025-06",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2024-06",
+              "2025-05",
+              "2025-06"
+            ]
+          },
+          {
+            "file": "PMS_OCT_2025.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "PMS_OCT_2025",
+                "shape": [
+                  55,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 14,
+                "column_count": 7,
+                "month_columns": [
+                  "2024-10",
+                  "2025-09",
+                  "2025-10"
+                ],
+                "current_month": "2025-10",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2024-10",
+              "2025-09",
+              "2025-10"
+            ]
+          },
+          {
+            "file": "Fuel APRIL 2026.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Fuel APRIL 2026",
+                "shape": [
+                  42,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 1,
+                "column_count": 7,
+                "month_columns": [
+                  "2025-04",
+                  "2026-03",
+                  "2026-04"
+                ],
+                "current_month": "2026-04",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2025-04",
+              "2026-03",
+              "2026-04"
+            ]
+          },
+          {
+            "file": "PMS_DECEMBER_2025.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Fuel December 2025",
+                "shape": [
+                  55,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 14,
+                "column_count": 7,
+                "month_columns": [
+                  "2024-12",
+                  "2025-11",
+                  "2025-12"
+                ],
+                "current_month": "2025-12",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2024-12",
+              "2025-11",
+              "2025-12"
+            ]
+          },
+          {
+            "file": "Fuel_NOV_2025.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Fuel November 2025",
+                "shape": [
+                  55,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 14,
+                "column_count": 7,
+                "month_columns": [
+                  "2024-11",
+                  "2025-10",
+                  "2025-11"
+                ],
+                "current_month": "2025-11",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2024-11",
+              "2025-10",
+              "2025-11"
+            ]
+          },
+          {
+            "file": "PMS AUGUST 2025.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "PMS AUGUST 2025",
+                "shape": [
+                  42,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 1,
+                "column_count": 7,
+                "month_columns": [
+                  "2024-08",
+                  "2025-07",
+                  "2025-08"
+                ],
+                "current_month": "2025-08",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2024-08",
+              "2025-07",
+              "2025-08"
+            ]
+          },
+          {
+            "file": "PMS_SEPTEMBER_2025.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "PMS SEPTEMBER 2025",
+                "shape": [
+                  42,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 1,
+                "column_count": 7,
+                "month_columns": [
+                  "2024-09",
+                  "2025-08",
+                  "2025-09"
+                ],
+                "current_month": "2025-09",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2024-09",
+              "2025-08",
+              "2025-09"
+            ]
+          },
+          {
+            "file": "PMS_FEBRUARY_ 2026.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Fuel FEBRUARY 2026",
+                "shape": [
+                  42,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 1,
+                "column_count": 7,
+                "month_columns": [
+                  "2025-02",
+                  "2026-01",
+                  "2026-02"
+                ],
+                "current_month": "2026-02",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2025-02",
+              "2026-01",
+              "2026-02"
+            ]
+          },
+          {
+            "file": "PMS_JANUARY_2025.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Sheet1",
+                "shape": [
+                  62,
+                  4
+                ],
+                "status": "parsed",
+                "header_row": 1,
+                "column_count": 4,
+                "month_columns": [
+                  "2025-01",
+                  "2025-12",
+                  "2026-01"
+                ],
+                "current_month": "2026-01",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2025-01",
+              "2025-12",
+              "2026-01"
+            ]
+          },
+          {
+            "file": "Fuel_Report_July_2025.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Fuel JULY 2025",
+                "shape": [
+                  41,
+                  10
+                ],
+                "status": "parsed",
+                "header_row": 0,
+                "column_count": 10,
+                "month_columns": [
+                  "2024-07",
+                  "2025-06",
+                  "2025-07"
+                ],
+                "current_month": "2025-07",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2024-07",
+              "2025-06",
+              "2025-07"
+            ]
+          },
+          {
+            "file": "PMS_March_ 2026.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Fuel MARCH 2026",
+                "shape": [
+                  55,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 14,
+                "column_count": 7,
+                "month_columns": [
+                  "2025-03",
+                  "2026-02",
+                  "2026-03"
+                ],
+                "current_month": "2026-03",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2025-03",
+              "2026-02",
+              "2026-03"
+            ]
+          },
+          {
+            "file": "Fuel_MAY_2026.xlsx",
+            "sheets": [
+              {
+                "sheet_name": "Fuel MAY 2026",
+                "shape": [
+                  43,
+                  7
+                ],
+                "status": "parsed",
+                "header_row": 2,
+                "column_count": 7,
+                "month_columns": [
+                  "2025-05",
+                  "2026-04",
+                  "2026-05"
+                ],
+                "current_month": "2026-05",
+                "rows_emitted": 111,
+                "states_parsed": 37,
+                "excluded_labels": {
+                  "AVERAGE": 1
+                },
+                "body_truncated_at": {
+                  "row_offset": 38,
+                  "trigger_label": "Year on Year",
+                  "reason": "recognised commentary banner below the state table"
+                }
+              }
+            ],
+            "rows_emitted": 111,
+            "excluded_labels": {
+              "AVERAGE": 1
+            },
+            "months": [
+              "2025-05",
+              "2026-04",
+              "2026-05"
+            ]
+          }
+        ],
+        "observations_before_dedup": 2109,
+        "observations_after_dedup": 1147,
+        "duplicates_collapsed": 962,
+        "from_current_month_column": 703
+      }
+    },
+    "weather": {
+      "name": "Open-Meteo NYC daily archive",
+      "pattern": "REST/JSON",
+      "ok": true,
+      "skipped": false,
+      "reason": "",
+      "file_count": 1,
+      "total_rows": 366,
+      "diagnostics": {
+        "observed_days": 366,
+        "expected_days": 366,
+        "days_match": true,
+        "variables_present": [
+          "temperature_2m_max",
+          "temperature_2m_min",
+          "precipitation_sum",
+          "snowfall_sum",
+          "wind_speed_10m_max"
+        ],
+        "variables_missing": [],
+        "ragged_arrays": {},
+        "date_min": "2024-01-01",
+        "date_max": "2024-12-31",
+        "timezone": "America/New_York",
+        "latitude": 40.738136,
+        "longitude": -74.04254,
+        "units": {
+          "time": "iso8601",
+          "temperature_2m_max": "\u00b0C",
+          "temperature_2m_min": "\u00b0C",
+          "precipitation_sum": "mm",
+          "snowfall_sum": "cm",
+          "wind_speed_10m_max": "km/h"
+        }
+      }
+    }
+  },
+  "bronze": {
+    "nyc_trips": {
+      "strategy": "registered in place (zero-copy bronze)",
+      "rationale": "copying 41 M rows into bronze and again into silver would spend ~2 GB of the 3 GB disk budget restating an already-columnar, immutable input",
+      "files": 12,
+      "raw_rows": 41169720,
+      "expected_rows": 41169720,
+      "rows_match_expected": true,
+      "pickup_min_observed": "2002-12-31 16:46:07",
+      "pickup_max_observed": "2026-06-26 23:53:12",
+      "pickup_out_of_window_rows": 56,
+      "pickup_out_of_window_pct": 0.000136,
+      "pickup_month_mismatch_rows": 420,
+      "null_pickup_rows": 0,
+      "null_dropoff_rows": 0,
+      "window_start": "2024-01-01",
+      "window_end_exclusive": "2025-01-01"
+    },
+    "nyc_zones": {
+      "rows": 265
+    },
+    "wfp": {
+      "rows": 87384,
+      "unparsable_dates": 0,
+      "null_prices": 0,
+      "date_min": "2002-01-15 00:00:00",
+      "date_max": "2026-07-15 00:00:00",
+      "admin1_count": 14,
+      "market_count": 68,
+      "commodity_count": 43,
+      "market_register_rows": 118
+    },
+    "nbs": {
+      "rows": 1147,
+      "months": 31,
+      "states": 37,
+      "month_min": "2023-11",
+      "month_max": "2026-05"
+    },
+    "weather": {
+      "status": "loaded",
+      "rows": 366,
+      "columns": [
+        "observation_date",
+        "temperature_2m_max",
+        "temperature_2m_min",
+        "precipitation_sum",
+        "snowfall_sum",
+        "wind_speed_10m_max",
+        "source_file",
+        "latitude",
+        "longitude"
+      ],
+      "units": {
+        "time": "iso8601",
+        "temperature_2m_max": "\u00b0C",
+        "temperature_2m_min": "\u00b0C",
+        "precipitation_sum": "mm",
+        "snowfall_sum": "cm",
+        "wind_speed_10m_max": "km/h"
+      }
+    }
+  },
+  "silver": {
+    "nyc_zones": {
+      "rows": 265,
+      "boroughs": 8,
+      "non_geographic": 2
+    },
+    "wfp": {
+      "rows_loaded": 87384,
+      "states": 14,
+      "markets": 68,
+      "commodities": 43,
+      "months": 295,
+      "month_min": "2002-01",
+      "month_max": "2026-07",
+      "fuel_rows": 3009,
+      "rejects_by_reason": {},
+      "rows_rejected": 0,
+      "unresolved_admin1_values": []
+    },
+    "nbs": {
+      "rows_loaded": 1147,
+      "months": 31,
+      "states": 37,
+      "month_min": "2023-11",
+      "month_max": "2026-05",
+      "rejects_by_reason": {},
+      "rows_rejected": 0,
+      "national_mean_by_month": {
+        "2023-11": 648.93,
+        "2023-12": 671.86,
+        "2024-01": 668.3,
+        "2024-02": 679.36,
+        "2024-03": 696.79,
+        "2024-04": 701.24,
+        "2024-05": 769.62,
+        "2024-06": 750.17,
+        "2024-07": 770.54,
+        "2024-08": 830.46,
+        "2024-09": 1030.46,
+        "2024-10": 1184.83,
+        "2024-11": 1214.17,
+        "2024-12": 1189.12,
+        "2025-01": 1258.34,
+        "2025-02": 1245.8,
+        "2025-03": 1261.65,
+        "2025-04": 1239.33,
+        "2025-05": 1027.76,
+        "2025-06": 1037.66,
+        "2025-07": 1024.99,
+        "2025-08": 988.25,
+        "2025-09": 970.59,
+        "2025-10": 1052.31,
+        "2025-11": 1061.35,
+        "2025-12": 1048.63,
+        "2026-01": 1034.76,
+        "2026-02": 1051.47,
+        "2026-03": 1288.54,
+        "2026-04": 1532.93,
+        "2026-05": 1596.25
+      },
+      "reporting_states_by_month": {
+        "2023-11": 37,
+        "2023-12": 37,
+        "2024-01": 37,
+        "2024-02": 37,
+        "2024-03": 37,
+        "2024-04": 37,
+        "2024-05": 37,
+        "2024-06": 37,
+        "2024-07": 37,
+        "2024-08": 37,
+        "2024-09": 37,
+        "2024-10": 37,
+        "2024-11": 37,
+        "2024-12": 37,
+        "2025-01": 37,
+        "2025-02": 37,
+        "2025-03": 37,
+        "2025-04": 37,
+        "2025-05": 37,
+        "2025-06": 37,
+        "2025-07": 37,
+        "2025-08": 37,
+        "2025-09": 37,
+        "2025-10": 37,
+        "2025-11": 37,
+        "2025-12": 37,
+        "2026-01": 37,
+        "2026-02": 37,
+        "2026-03": 37,
+        "2026-04": 37,
+        "2026-05": 37
+      },
+      "canonical_state_total": 37
+    },
+    "weather": {
+      "status": "loaded",
+      "rows": 366
+    },
+    "nyc_trips": {
+      "rows_accepted": 40421155,
+      "rows_rejected": 748565,
+      "raw_rows": 41169720,
+      "rejects_by_reason": {
+        "negative_money": 733787,
+        "non_positive_duration": 13510,
+        "implausible_distance": 1038,
+        "duration_exceeds_ceiling": 230
+      },
+      "outside_declared_window_rows": 56,
+      "reject_sample_rows": 10000
+    }
+  },
+  "gold": {
+    "fact_trip": {
+      "rows": 40421155,
+      "rows_in_2024_partitions": 40421100,
+      "rows_outside_declared_window": 55,
+      "partition_count": 20,
+      "partitions": [
+        "year=2002/month=12",
+        "year=2008/month=12",
+        "year=2009/month=1",
+        "year=2023/month=12",
+        "year=2024/month=1",
+        "year=2024/month=10",
+        "year=2024/month=11",
+        "year=2024/month=12",
+        "year=2024/month=2",
+        "year=2024/month=3",
+        "year=2024/month=4",
+        "year=2024/month=5",
+        "year=2024/month=6",
+        "year=2024/month=7",
+        "year=2024/month=8",
+        "year=2024/month=9",
+        "year=2025/month=1",
+        "year=2025/month=2",
+        "year=2025/month=3",
+        "year=2026/month=6"
+      ],
+      "bytes": 1535395852,
+      "bytes_human": "1.4 GB",
+      "bytes_per_row": 37.98,
+      "per_month": [
+        {
+          "month": "2024-01",
+          "rows": 2926143,
+          "bytes": 110400111,
+          "seconds": 21.32
+        },
+        {
+          "month": "2024-02",
+          "rows": 2965944,
+          "bytes": 111817360,
+          "seconds": 20.9
+        },
+        {
+          "month": "2024-03",
+          "rows": 3522772,
+          "bytes": 133053571,
+          "seconds": 22.98
+        },
+        {
+          "month": "2024-04",
+          "rows": 3455338,
+          "bytes": 130911454,
+          "seconds": 20.85
+        },
+        {
+          "month": "2024-05",
+          "rows": 3662440,
+          "bytes": 139424835,
+          "seconds": 23.82
+        },
+        {
+          "month": "2024-06",
+          "rows": 3475986,
+          "bytes": 132089733,
+          "seconds": 22.52
+        },
+        {
+          "month": "2024-07",
+          "rows": 3016866,
+          "bytes": 115068164,
+          "seconds": 22.26
+        },
+        {
+          "month": "2024-08",
+          "rows": 2919635,
+          "bytes": 111580629,
+          "seconds": 20.87
+        },
+        {
+          "month": "2024-09",
+          "rows": 3558310,
+          "bytes": 135412205,
+          "seconds": 21.16
+        },
+        {
+          "month": "2024-10",
+          "rows": 3756993,
+          "bytes": 143083552,
+          "seconds": 88.62
+        },
+        {
+          "month": "2024-11",
+          "rows": 3572658,
+          "bytes": 135561581,
+          "seconds": 77.42
+        },
+        {
+          "month": "2024-12",
+          "rows": 3588015,
+          "bytes": 136936754,
+          "seconds": 68.8
+        }
+      ]
+    },
+    "fact_market_price_monthly": {
+      "rows": 87384,
+      "months": 295,
+      "markets": 68,
+      "commodities": 66,
+      "unknown_geo": 0,
+      "unknown_commodity": 0,
+      "source_rows": 87384,
+      "month_min": 20020101,
+      "month_max": 20260701
+    },
+    "fact_fuel_price_monthly": {
+      "rows": 1147,
+      "months": 31,
+      "states": 37,
+      "unknown_geo": 0,
+      "null_mom": 37,
+      "null_yoy": 444,
+      "month_min": 20231101,
+      "month_max": 20260501
+    },
+    "fact_trip_daily_agg": {
+      "rows": 84910,
+      "dates": 374,
+      "zones": 263,
+      "trips_covered": 40421155,
+      "build_seconds": 54.59
+    },
+    "fact_weather_daily": {
+      "status": "loaded",
+      "rows": 366,
+      "unknown_geo": 0,
+      "date_min": 20240101,
+      "date_max": 20241231
+    }
+  },
+  "analyses": {
+    "A1": {
+      "sql_file": "A1_demand_profile.sql",
+      "output_csv": "A1_demand_profile.csv",
+      "rows": 1342,
+      "columns": 11,
+      "seconds": 96.858
+    },
+    "A2": {
+      "sql_file": "A2_od_corridors.sql",
+      "output_csv": "A2_od_corridors.csv",
+      "rows": 25,
+      "columns": 16,
+      "seconds": 80.126
+    },
+    "A3": {
+      "sql_file": "A3_congestion_proxy.sql",
+      "output_csv": "A3_congestion_proxy.csv",
+      "rows": 222,
+      "columns": 12,
+      "seconds": 183.282
+    },
+    "A4": {
+      "sql_file": "A4_tipping_behaviour.sql",
+      "output_csv": "A4_tipping_behaviour.csv",
+      "rows": 197,
+      "columns": 16,
+      "seconds": 25.587
+    },
+    "A5": {
+      "sql_file": "A5_revenue_concentration.sql",
+      "output_csv": "A5_revenue_concentration.csv",
+      "rows": 263,
+      "columns": 12,
+      "seconds": 27.384
+    },
+    "A6": {
+      "sql_file": "A6_food_price_index.sql",
+      "output_csv": "A6_food_price_index.csv",
+      "rows": 1046,
+      "columns": 15,
+      "seconds": 0.324
+    },
+    "A7": {
+      "sql_file": "A7_subsidy_structural_break.sql",
+      "outputs": {
+        "A7_subsidy_structural_break.csv": 8
+      },
+      "status": "result",
+      "seconds": 0.481
+    },
+    "A8": {
+      "sql_file": "A8_price_dispersion.sql",
+      "output_csv": "A8_price_dispersion.csv",
+      "rows": 5779,
+      "columns": 17,
+      "seconds": 0.41
+    },
+    "A9": {
+      "sql_file": "A9_fuel_food_passthrough.sql",
+      "outputs": {
+        "A9_fuel_food_passthrough.csv": 8
+      },
+      "status": "exploratory -- null result; rests on 3 of 37 states and supports no inference (see docs/methodology_notes.md, Limitations)",
+      "seconds": 0.575
+    },
+    "A10": {
+      "sql_file": "A10_grain_comparison.sql",
+      "output_csv": "A10_grain_comparison.csv",
+      "rows": 5,
+      "columns": 16,
+      "seconds": 8.93
+    },
+    "A11": {
+      "sql_file": "A11_missingness_structure.sql",
+      "output_csv": "A11_missingness_structure.csv",
+      "rows": 26,
+      "columns": 11,
+      "seconds": 70.843
+    },
+    "A12": {
+      "sql_file": "A12_petrol_price_geography.sql",
+      "outputs": {
+        "A12_petrol_price_geography.csv": 1147,
+        "A12_petrol_price_geography_national.csv": 31,
+        "A12_petrol_price_geography_states.csv": 37,
+        "A12_petrol_price_geography_zones.csv": 186
+      },
+      "status": "result",
+      "seconds": 0.17
+    }
+  },
+  "benchmarks": {
+    "environment": {
+      "cpu_limit_declared": "4",
+      "memory_limit_gb_declared": "8",
+      "duckdb_threads": 4,
+      "duckdb_memory_limit": "6GB",
+      "os_cpu_count": 8,
+      "repeats": 3,
+      "summary_statistic": "median of repeats"
+    },
+    "results": [
+      {
+        "benchmark": "B1_format_comparison",
+        "variant": "parquet",
+        "month": "2024-01",
+        "rows": 2926143,
+        "bytes": 110400111,
+        "bytes_human": "105.3 MB",
+        "bytes_per_row": 37.7289,
+        "full_scan_median_seconds": 4.894281,
+        "full_scan_min_seconds": 4.570324,
+        "full_scan_max_seconds": 5.110036,
+        "single_column_median_seconds": 0.319746,
+        "single_column_min_seconds": 0.266236,
+        "single_column_max_seconds": 0.502468,
+        "peak_rss_gb": 0.2531,
+        "ok": true,
+        "error": "",
+        "csv_vs_parquet_full_scan_ratio": 2.3977,
+        "csv_vs_parquet_single_column_ratio": 36.164
+      },
+      {
+        "benchmark": "B1_format_comparison",
+        "variant": "csv",
+        "month": "2024-01",
+        "rows": 2926143,
+        "bytes": 427695820,
+        "bytes_human": "407.9 MB",
+        "bytes_per_row": 146.1637,
+        "full_scan_median_seconds": 11.735108,
+        "full_scan_min_seconds": 9.551233,
+        "full_scan_max_seconds": 13.222622,
+        "single_column_median_seconds": 11.56329,
+        "single_column_min_seconds": 10.717937,
+        "single_column_max_seconds": 11.957604,
+        "peak_rss_gb": 0.3467,
+        "ok": true,
+        "error": "",
+        "csv_vs_parquet_full_scan_ratio": 2.3977,
+        "csv_vs_parquet_single_column_ratio": 36.164
+      },
+      {
+        "benchmark": "B2_partition_pruning",
+        "variant": "partitioned_pruned",
+        "month_filtered": "2024-01",
+        "median_seconds": 1.49076,
+        "min_seconds": 1.328312,
+        "max_seconds": 1.542583,
+        "bytes_scanned_on_disk": 110400111,
+        "bytes_scanned_human": "105.3 MB",
+        "dataset_total_bytes": 1535395852,
+        "fraction_of_dataset_scanned": 0.071903,
+        "peak_rss_gb": 0.1423,
+        "projection": "pickup_date_key, pickup_geo_key, total_amount, trip_distance_miles, year, month",
+        "note": "partition keys in the predicate; only the target partition is opened",
+        "ok": true,
+        "error": "",
+        "speedup_from_pruning": 0.5514
+      },
+      {
+        "benchmark": "B2_partition_pruning",
+        "variant": "consolidated_single_file",
+        "month_filtered": "2024-01",
+        "median_seconds": 0.822064,
+        "min_seconds": 0.817848,
+        "max_seconds": 0.83034,
+        "bytes_scanned_on_disk": 213927359,
+        "bytes_scanned_human": "204.0 MB",
+        "dataset_total_bytes": 213927359,
+        "fraction_of_dataset_scanned": 1.0,
+        "peak_rss_gb": 0.1483,
+        "projection": "pickup_date_key, pickup_geo_key, total_amount, trip_distance_miles, year, month",
+        "note": "one file, opened whole; Parquet row-group statistics (zone maps) on year and month still let the reader skip row groups outside the filter",
+        "ok": true,
+        "error": "",
+        "speedup_from_pruning": 0.5514
+      },
+      {
+        "benchmark": "B3_aggregate_navigation",
+        "variant": "from_atomic_fact",
+        "source_relation": "fact_trip (40.4 M rows)",
+        "median_seconds": 27.230352,
+        "min_seconds": 26.864889,
+        "max_seconds": 30.043431,
+        "peak_rss_gb": 2.0911,
+        "top_rows_sample": "[('2024-10', 194, 185521, 15507750.950008672), ('2024-09', 194, 180036, 14954641.270007476), ('2024-07', 194, 174338, 14164803.060005914), ('2024-08', 194, 174705, 14164469.160005394), ('2024-05', 194, 161520, 13318192.180005958)]",
+        "ok": true,
+        "error": "",
+        "speedup_from_aggregate": 131.3522
+      },
+      {
+        "benchmark": "B3_aggregate_navigation",
+        "variant": "from_daily_aggregate",
+        "source_relation": "fact_trip_daily_agg",
+        "median_seconds": 0.207308,
+        "min_seconds": 0.127605,
+        "max_seconds": 0.211682,
+        "peak_rss_gb": 0.1375,
+        "top_rows_sample": "[('2024-10', 194, 185521, 15507750.95), ('2024-09', 194, 180036, 14954641.27), ('2024-07', 194, 174338, 14164803.06), ('2024-08', 194, 174705, 14164469.160000002), ('2024-05', 194, 161520, 13318192.18)]",
+        "ok": true,
+        "error": "",
+        "speedup_from_aggregate": 131.3522
+      },
+      {
+        "benchmark": "B4_engine_comparison",
+        "variant": "duckdb",
+        "median_seconds": 13.27913,
+        "min_seconds": 13.225192,
+        "max_seconds": 14.441727,
+        "peak_rss_gb": 0.192,
+        "memory_limit_gb": "8",
+        "completed": true,
+        "ok": true,
+        "error": "",
+        "note": "streaming, out-of-core group-by inside DuckDB",
+        "pandas_vs_duckdb_ratio": 1.606
+      },
+      {
+        "benchmark": "B4_engine_comparison",
+        "variant": "pandas",
+        "median_seconds": 21.326458,
+        "min_seconds": 15.188222,
+        "max_seconds": 22.209274,
+        "peak_rss_gb": 3.4829,
+        "memory_limit_gb": "8",
+        "completed": true,
+        "ok": true,
+        "error": "",
+        "note": "whole projection materialised in memory, then grouped; not chunked, by design",
+        "pandas_vs_duckdb_ratio": 1.606
+      }
+    ]
+  },
+  "verification": {
+    "present": 48,
+    "missing": [],
+    "optional_skipped": [],
+    "extras": [
+      "outputs/cloud/engine_comparison_cloud.png",
+      "outputs/cloud/scale_behaviour.png"
+    ],
+    "data_bytes": 2263164521,
+    "within_disk_budget": true
+  },
+  "runtime": {
+    "total_seconds": 2123.8,
+    "extraction_seconds": 7.3,
+    "processing_seconds_excluding_downloads": 2116.5,
+    "budget_minutes": 20,
+    "within_budget": false
+  },
+  "cloud": {
+    "started_utc": "2026-09-15T06:04:22.566329+00:00",
+    "monthly_usage_before": {
+      "bytes": 0,
+      "source": "INFORMATION_SCHEMA.JOBS_BY_USER"
+    },
+    "pricing": {
+      "usd_per_tib": 6.25,
+      "source": "configuration value BQ_ON_DEMAND_USD_PER_TIB (not verified)",
+      "reference_url": "https://cloud.google.com/bigquery/pricing",
+      "page_rate_found": null,
+      "checked_utc": "2026-09-15T06:04:42+00:00"
+    },
+    "projected_bytes": {
+      "C1 x3": 19485343734,
+      "C2 one month": 676787464,
+      "C2 one year": 676787464,
+      "C2 largest single table": 2207375608,
+      "C2 full yellow archive": 12519702648
+    },
+    "finished_utc": "2026-09-15T06:08:40.218697+00:00",
+    "session_bytes_spent": 35570843648,
+    "session_headroom_bytes": 179177521152,
+    "query_log": [
+      {
+        "label": "monthly usage via JOBS_BY_USER",
+        "projected_bytes": 6571,
+        "bytes_processed": 0,
+        "bytes_billed": 0,
+        "seconds_to_complete": 2.095,
+        "session_spent_bytes": 0,
+        "headroom_bytes": 214748364800
+      },
+      {
+        "label": "C1 BigQuery run 1/3",
+        "projected_bytes": 6495114578,
+        "bytes_processed": 6495114578,
+        "bytes_billed": 6495928320,
+        "seconds_to_complete": 3.533,
+        "session_spent_bytes": 6495928320,
+        "headroom_bytes": 208252436480
+      },
+      {
+        "label": "C1 BigQuery run 2/3",
+        "projected_bytes": 6495114578,
+        "bytes_processed": 6495114578,
+        "bytes_billed": 6495928320,
+        "seconds_to_complete": 3.15,
+        "session_spent_bytes": 12991856640,
+        "headroom_bytes": 201756508160
+      },
+      {
+        "label": "C1 BigQuery run 3/3",
+        "projected_bytes": 6495114578,
+        "bytes_processed": 6495114578,
+        "bytes_billed": 6495928320,
+        "seconds_to_complete": 2.801,
+        "session_spent_bytes": 19487784960,
+        "headroom_bytes": 195260579840
+      },
+      {
+        "label": "C2 one month",
+        "projected_bytes": 676787464,
+        "bytes_processed": 676787464,
+        "bytes_billed": 677380096,
+        "seconds_to_complete": 1.223,
+        "session_spent_bytes": 20165165056,
+        "headroom_bytes": 194583199744
+      },
+      {
+        "label": "C2 one year",
+        "projected_bytes": 676787464,
+        "bytes_processed": 676787464,
+        "bytes_billed": 677380096,
+        "seconds_to_complete": 1.391,
+        "session_spent_bytes": 20842545152,
+        "headroom_bytes": 193905819648
+      },
+      {
+        "label": "C2 largest single table",
+        "projected_bytes": 2207375608,
+        "bytes_processed": 2207375608,
+        "bytes_billed": 2208301056,
+        "seconds_to_complete": 1.908,
+        "session_spent_bytes": 23050846208,
+        "headroom_bytes": 191697518592
+      },
+      {
+        "label": "C2 full yellow archive",
+        "projected_bytes": 12519702648,
+        "bytes_processed": 12519702648,
+        "bytes_billed": 12519997440,
+        "seconds_to_complete": 2.568,
+        "session_spent_bytes": 35570843648,
+        "headroom_bytes": 179177521152
+      }
+    ],
+    "outputs": [
+      "table_inventory.csv",
+      "engine_comparison_cloud.csv",
+      "scale_behaviour.csv",
+      "engine_comparison_cloud.png",
+      "scale_behaviour.png"
+    ],
+    "confounders": [
+      "Different data years: the public BigQuery TLC dataset ends in 2022 and holds no 2024 rows, so the cloud side reads 2019 and the local side 2024.",
+      "Different volumes: the two years contain different numbers of trips.",
+      "Different storage layouts: this pipeline's Hive-partitioned ZSTD Parquet versus Google-managed columnar storage.",
+      "Different hardware: a 4-CPU / 8 GB Docker Desktop VM on one laptop versus a shared, elastically scheduled BigQuery slot pool of undisclosed size.",
+      "Network: BigQuery latency includes job submission and completion polling over the internet; local latency has no network hop.",
+      "Different byte definitions: BigQuery reports logical (uncompressed) bytes of the columns read; the local figures come from Parquet column-chunk metadata and are given both compressed (on disk) and uncompressed.",
+      "Cache state: the BigQuery result cache is disabled; local runs read through a warm operating-system page cache."
+    ]
+  }
+}

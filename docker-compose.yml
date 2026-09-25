@@ -1,0 +1,39 @@
+# CSC 796 Advanced Data Engineering -- full pipeline in one command.
+#
+#   docker compose up --build
+#
+# Every artefact is written to bind-mounted host directories so that outputs
+# survive container removal and can be inspected without entering the container.
+services:
+  pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: csc796-mobility-platform:latest
+    container_name: csc796-pipeline
+    env_file:
+      - .env
+    environment:
+      # Resource ceilings are echoed into the run manifest and benchmark report
+      # so the measurements in section 8 are interpretable.
+      CSC796_CPU_LIMIT: "4"
+      CSC796_MEM_LIMIT_GB: "8"
+      DUCKDB_THREADS: "4"
+      DUCKDB_MEMORY_LIMIT: "6GB"
+    volumes:
+      - ./data:/app/data
+      - ./outputs:/app/outputs
+      - ./logs:/app/logs
+      - ./docs:/app/docs
+      - ./notebooks:/app/notebooks
+      - ./src:/app/src:ro
+      - ./sql:/app/sql:ro
+      - ./config:/app/config:ro
+      - ./tests:/app/tests:ro
+      - ./secrets:/app/secrets:ro
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: 8G
+    command: ["python", "-m", "src.pipeline", "--stage", "all"]

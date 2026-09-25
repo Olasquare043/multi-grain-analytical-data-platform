@@ -1,0 +1,6 @@
+column,n_distinct_including_null,n_distinct_excluding_null,n_nulls,values,n_total_dim_rows,n_unknown_member_rows,n_observed_combinations,theoretical_max_combinations
+flag_key,25,25,0,-1;1;10;11;12;13;14;15;16;17;18;19;2;20;21;22;23;24;3;4;5;6;7;8;9,25,1,24,24
+store_and_fwd_flag,3,2,9,N;Y,25,1,24,24
+is_airport_trip,3,2,1,False;True,25,1,24,24
+has_tip,3,2,1,False;True,25,1,24,24
+has_toll,3,2,1,False;True,25,1,24,24

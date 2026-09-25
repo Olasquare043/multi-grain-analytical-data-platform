@@ -1,0 +1,49 @@
+# CSC 796 Advanced Data Engineering -- core pipeline dependencies.
+# Every version is pinned for reproducibility (constraint 2.3 / 2.6).
+#
+# Specification-permitted direct dependencies
+duckdb==1.1.3
+pandas==2.2.3
+pyarrow==18.1.0
+requests==2.32.3
+matplotlib==3.9.2
+openpyxl==3.1.5
+beautifulsoup4==4.12.3
+lxml==5.3.0
+python-dateutil==2.9.0.post0
+#
+# Documented additions beyond the specification's permitted list.
+# PyYAML  : section 6 mandates a declarative rule file at config/quality_rules.yaml;
+#           the permitted list contains no YAML parser. Hand-rolling one was judged
+#           worse engineering than a pinned, pure-Python, zero-cost dependency.
+# pytest  : section 11 mandates a test suite; the permitted list contains no runner.
+# numpy   : transitive requirement of pandas/matplotlib, pinned here for determinism.
+PyYAML==6.0.2
+pytest==8.3.4
+numpy==2.1.3
+#
+# v3 modelling-layer additions (feature engineering ladder, section 1 of the v3 prompt).
+# scikit-learn : train/test scaffolding and metrics (MAE, MAPE) for the ladder notebooks.
+# lightgbm     : the single fixed model type used at every rung of both ladders.
+# jupyter      : the ladder notebooks (01/02/03) are the delivered artefact, not scripts.
+# nbconvert    : executes the notebooks headlessly and renders them to HTML for verification.
+# ipykernel    : the Python kernel nbconvert --execute runs the notebooks against.
+#
+# category_encoders was tried for the V4 one-hot rung and dropped: at NYC scale (2.4M
+# rows x 265 categories, notebooks/02_nyc_trip_duration.ipynb) its OneHotEncoder spiked
+# container memory badly enough to kill the kernel, as did two hand-rolled pandas.DataFrame
+# replacements after it (see src/modelling/encoders.py's module docstring for the full
+# history). The working version builds a scipy.sparse matrix directly and needs no new
+# entry here: scipy already ships as a transitive dependency of scikit-learn and lightgbm.
+# Point-in-time target encoding is likewise hand-rolled, since no library implements it
+# leakage-safely.
+scikit-learn==1.5.2
+lightgbm==4.5.0
+jupyter==1.1.1
+nbconvert==7.16.4
+ipykernel==6.29.5
+# mistune: nbconvert 7.16.4's markdown-to-HTML filter breaks under an unpinned
+# mistune 3.3.x (renamed internal parser methods -- AttributeError at
+# `jupyter nbconvert --to html`). Pinned to the version documented compatible
+# with nbconvert 7.x.
+mistune==3.0.2

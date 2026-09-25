@@ -1,0 +1,13 @@
+data/
+logs/
+outputs/
+.git/
+.venv/
+__pycache__/
+.pytest_cache/
+
+# Credentials are bind-mounted / injected at runtime and must never be baked
+# into an image layer (section 9, authentication requirement).
+secrets/
+.env
+*.json.key

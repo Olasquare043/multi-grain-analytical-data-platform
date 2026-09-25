@@ -1,0 +1,6 @@
+task,window,start,end,n_rows,notes,target_min,target_max
+nigeria,train,2023-11 (month_key 20231101),2025-11 (month_key 20251101),925,"25 feature months, no sampling; full panel",602.55,1730.0
+nigeria,test,2025-12 (month_key 20251201),2026-04 (last feature month with a target; panel month_key ceiling 20260501 but 2026-05 rows have no next-month target and are dropped),185,"5 feature months (2025-12..2026-04), predicting target months 2026-01..2026-05",946.9,1722.91
+nigeria,"cv_validation (5 expanding-window folds, within training period only)",,,,see nigeria_cv_folds section below,,
+nyc,train,2024-01,2024-10,33260427,"full gated population in window, before per-seed sampling",1.0,86399.0
+nyc,test,2024-11,2024-12,7160673,"full gated population in window, before per-seed sampling",1.0,86398.0
